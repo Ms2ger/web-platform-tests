@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <title>Historical DOM features must be removed</title>
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
+<script src="../../git-th-Ms2ger/testharness.js"></script>
+<script src="../../git-th-Ms2ger/testharnessreport.js"></script>
 <div id=log></div>
 <script>
+window.alert("x")
+</script>
+<script>
+try {
 function isInterfaceNuked(name) {
   test(function() {
     assert_equals(window[name], undefined)
@@ -137,4 +141,5 @@ var windowNuked = [
   "attachEvent"
 ]
 windowNuked.forEach(isNukedFromWindow)
+} catch (e) { window.alert(e) }
 </script>
