@@ -138,5 +138,9 @@ var windowNuked = [
   "attachEvent"
 ]
 windowNuked.forEach(isNukedFromWindow)
-} catch (e) { window.alert(e) }
+} catch (e) {
+  window.alert(e)
+} finally {
+  window.onload()
+}
 </script>

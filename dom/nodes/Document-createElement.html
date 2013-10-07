@@ -6,10 +6,12 @@
 <link rel=help href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-element-tagname">
 <link rel=help href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-element-prefix">
 <link rel=help href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-element-namespaceuri">
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
+<script src="../../../git-th-Ms2ger/testharness.js"></script>
+<script src="../../../git-th-Ms2ger/testharnessreport.js"></script>
 <div id="log"></div>
 <script>
+alert("hi1")
+try {
 function toASCIIUppercase(str) {
   var diff = "a".charCodeAt(0) - "A".charCodeAt(0);
   var res = "";
@@ -65,7 +67,9 @@ test(function() {
        "f<oo"
      ]
 
+  alert("hi2")
   valid.forEach(function(t) {
+    alert(format_value(t[0]))
     test(function() {
       var elt = document.createElement(t[0])
       assert_true(elt instanceof Element)
@@ -76,10 +80,18 @@ test(function() {
       assert_equals(elt.namespaceURI, HTMLNS)
     }, "createElement(" + format_value(t[0]) + ")");
   });
+  alert("hi3")
   invalid.forEach(function(arg) {
     test(function() {
       assert_throws("INVALID_CHARACTER_ERR", function() { document.createElement(arg) })
     }, "createElement(" + format_value(arg) + ")");
   });
+  alert("hi4")
 })
+} catch (e) {
+  window.alert(e)
+} finally {
+  alert("hi")
+  window.onload()
+}
 </script>
