@@ -4,9 +4,6 @@
 <script src="../../git-th-Ms2ger/testharnessreport.js"></script>
 <div id=log></div>
 <script>
-window.alert("x")
-</script>
-<script>
 try {
 function isInterfaceNuked(name) {
   test(function() {
@@ -65,7 +62,7 @@ test(function() {
   assert_equals(document.implementation["getFeature"], undefined)
 }, "DOMImplementation.getFeature() must be nuked.")
 
-function isNukedFromElement(name) {
+/*function isNukedFromElement(name) {
   test(function() {
     var ele = document.createElementNS("test", "test")
     assert_equals(document.body[name], undefined)
@@ -82,7 +79,7 @@ var elementNuked = [
   "setIdAttributeNS",
   "setIdAttributeNode"
 ]
-elementNuked.forEach(isNukedFromElement)
+elementNuked.forEach(isNukedFromElement)*/
 
 function isNukedFromDoctype(name) {
   test(function() {
