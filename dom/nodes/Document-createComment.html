@@ -12,21 +12,22 @@
 <link rel=help href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-node-childnodes">
 <link rel=help href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-node-firstchild">
 <link rel=help href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-node-lastchild">
-<script src="/resources/testharness.js"></script>
-<script src="/resources/testharnessreport.js"></script>
+<script src="../../../git-th-Ms2ger/testharness.js"></script>
+<script src="../../../git-th-Ms2ger/testharnessreport.js"></script>
 <div id="log"></div>
 <script>
 test(function() {
-  ["\u000b", "a -- b", "a-", "-b"].forEach(function(value) {
+  ["\u000b", "a -- b", "a-", "-b", null, undefined].forEach(function(value) {
     test(function() {
       var c = document.createComment(value);
+      var expected = String(value);
       assert_true(c instanceof Comment);
       assert_true(c instanceof Node);
       assert_equals(c.ownerDocument, document);
-      assert_equals(c.data, value);
-      assert_equals(c.nodeValue, value);
-      assert_equals(c.textContent, value);
-      assert_equals(c.length, value.length);
+      assert_equals(c.data, expected, "data");
+      assert_equals(c.nodeValue, expected, "nodeValue");
+      assert_equals(c.textContent, expected, "textContent");
+      assert_equals(c.length, expected.length);
       assert_equals(c.nodeType, 8);
       assert_equals(c.nodeName, "#comment");
       assert_equals(c.hasChildNodes(), false);
@@ -36,4 +37,5 @@ test(function() {
     }, "createComment(" + format_value(value) + ")");
   });
 });
+window.onload();
 </script>
