@@ -6,11 +6,10 @@
 <link rel=help href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-element-tagname">
 <link rel=help href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-element-prefix">
 <link rel=help href="http://dvcs.w3.org/hg/domcore/raw-file/tip/Overview.html#dom-element-namespaceuri">
-<script src="../../../git-th-Ms2ger/testharness.js"></script>
-<script src="../../../git-th-Ms2ger/testharnessreport.js"></script>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
 <div id="log"></div>
 <script>
-try {
 function toASCIIUppercase(str) {
   var diff = "a".charCodeAt(0) - "A".charCodeAt(0);
   var res = "";
@@ -83,9 +82,4 @@ test(function() {
     }, "createElement(" + format_value(arg) + ")");
   });
 })
-} catch (e) {
-  alert(e)
-} finally {
-  window.onload()
-}
 </script>
