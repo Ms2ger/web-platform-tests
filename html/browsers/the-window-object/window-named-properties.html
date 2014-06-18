@@ -14,25 +14,49 @@
 <script>
 function assert_data_propdesc(pd, Writable, Enumerable, Configurable) {
   assert_equals(typeof pd, "object");
-  assert_equals(pd.writable, Writable);
-  assert_equals(pd.enumerable, Enumerable);
-  assert_equals(pd.configurable, Configurable);
+  assert_equals(pd.writable, Writable, "Writable");
+  assert_equals(pd.enumerable, Enumerable, "Enumerable");
+  assert_equals(pd.configurable, Configurable, "Configurable");
 }
-test(function() {
-  assert_true("bar" in window, "bar not in window");
-  assert_equals(window["bar"],
-                document.getElementsByTagName("iframe")[0].contentWindow);
-}, "Static name");
-test(function() {
-  assert_true("bar" in Window.prototype, "bar in Window.prototype");
-  assert_false(Window.prototype.hasOwnProperty("bar"), "Window.prototype.hasOwnProperty(\"bar\")");
 
-  var gsp = Object.getPrototypeOf(Object.getPrototypeOf(window));
-  assert_true("bar" in gsp, "bar in gsp");
-  assert_true(gsp.hasOwnProperty("bar"), "gsp.hasOwnProperty(\"bar\")");
-  assert_data_propdesc(Object.getOwnPropertyDescriptor(gsp, "bar"),
-                       false, true, true);
-}, "Static name on the prototype");
+var expected;
+setup(function() {
+  expected = [
+    ["bar", document.getElementsByTagName("iframe")[0].contentWindow],
+  ];
+  ["a", "applet", "area", "embed", "form", "frameset", "img", "object"].forEach(function(localName) {
+    var element = document.createElement(localName);
+    var name = "name-" + localName;
+    element.setAttribute("name", name);
+    document.body.appendChild(element);
+    expected.push([name, element]);
+  });
+});
+
+expected.forEach(function(e) {
+  var name = e[0], object = e[1];
+  test(function() {
+    assert_true(name in window, "name not in window");
+    assert_equals(window[name], object);
+    assert_false(window.hasOwnProperty(name), "window.hasOwnProperty(name)");
+  }, "Static name " + format_value(name) + " on window");
+
+  test(function() {
+    assert_true(name in Window.prototype, "name not in Window.prototype");
+    assert_equals(Window.prototype[name], object);
+    assert_false(Window.prototype.hasOwnProperty(name), "Window.prototype.hasOwnProperty(name)");
+  }, "Static name " + format_value(name) + " on Window.prototype");
+
+  test(function() {
+    var gsp = Object.getPrototypeOf(Object.getPrototypeOf(window));
+    assert_true(name in gsp, "name not in gsp");
+    assert_equals(gsp[name], object);
+    assert_true(gsp.hasOwnProperty(name), "Window.prototype.hasOwnProperty(name)");
+    assert_data_propdesc(Object.getOwnPropertyDescriptor(gsp, name),
+                         false, true, true);
+  }, "Static name " + format_value(name) + " on the named properties object");
+});
+
 test(function() {
   assert_equals(window.constructor, Window);
   assert_false(window.hasOwnProperty("constructor"), "window.constructor should not be an own property.");
