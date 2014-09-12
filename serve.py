@@ -1,4 +1,7 @@
  # -*- coding: utf-8 -*-
+
+from __future__ import print_function, unicode_literals
+
 import argparse
 import json
 import logging
@@ -8,7 +11,7 @@ import socket
 import sys
 import threading
 import time
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import uuid
 from collections import defaultdict
 from multiprocessing import Process, Event
@@ -32,11 +35,11 @@ routes = [("GET", "/tools/runner/*", handlers.file_handler),
 
 rewrites = [("GET", "/resources/WebIDLParser.js", "/resources/webidl2/lib/webidl2.js")]
 
-subdomains = [u"www",
-              u"www1",
-              u"www2",
-              u"天気の良い日",
-              u"élève"]
+subdomains = ["www",
+              "www1",
+              "www2",
+              "天気の良い日",
+              "élève"]
 
 logger = None
 
@@ -76,7 +79,7 @@ class ServerProc(object):
         try:
             self.daemon = init_func(config, paths, port, bind_hostname)
         except socket.error:
-            print >> sys.stderr, "Socket error on port %s" % port
+            print("Socket error on port %s" % port, file=sys.stderr)
             raise
 
         if self.daemon:
@@ -106,20 +109,20 @@ def check_subdomains(config, paths, subdomains, bind_hostname):
     connected = False
     for i in range(10):
         try:
-            urllib2.urlopen("http://%s:%d/" % (config["host"], port))
+            urllib.request.urlopen("http://%s:%d/" % (config["host"], port))
             connected = True
             break
-        except urllib2.URLError:
+        except urllib.error.URLError:
             time.sleep(1)
 
     if not connected:
         logger.critical("Failed to connect to test server on http://%s:%s You may need to edit /etc/hosts or similar" % (config["host"], port))
         sys.exit(1)
 
-    for subdomain, (punycode, host) in subdomains.iteritems():
+    for subdomain, (punycode, host) in subdomains.items():
         domain = "%s.%s" % (punycode, host)
         try:
-            urllib2.urlopen("http://%s:%d/" % (domain, port))
+            urllib.request.urlopen("http://%s:%d/" % (domain, port))
         except Exception as e:
             logger.critical("Failed probing domain %s. You may need to edit /etc/hosts or similar." % domain)
             sys.exit(1)
@@ -129,7 +132,7 @@ def check_subdomains(config, paths, subdomains, bind_hostname):
 def get_subdomains(config):
     #This assumes that the tld is ascii-only or already in punycode
     host = config["host"]
-    return {subdomain: (subdomain.encode("idna"), host)
+    return {subdomain: (subdomain.encode("idna").decode("utf-8"), host)
             for subdomain in subdomains}
 
 def start_servers(config, paths, ports, bind_hostname):
@@ -137,7 +140,7 @@ def start_servers(config, paths, ports, bind_hostname):
 
     host = config["host"]
 
-    for scheme, ports in ports.iteritems():
+    for scheme, ports in ports.items():
         assert len(ports) == {"http":2}.get(scheme, 1)
 
         for port  in ports:
@@ -224,7 +227,7 @@ def start_wss_server(config, paths, port, bind_hostname):
 
 def get_ports(config):
     rv = defaultdict(list)
-    for scheme, ports in config["ports"].iteritems():
+    for scheme, ports in config["ports"].items():
         for i, port in enumerate(ports):
             if port == "auto":
                 port = get_port()
@@ -235,12 +238,12 @@ def get_ports(config):
 
 def normalise_config(config, domains, ports):
     ports_ = {}
-    for scheme, ports_used in ports.iteritems():
+    for scheme, ports_used in ports.items():
         ports_[scheme] = ports_used
 
     domains_ = domains.copy()
 
-    for key, value in domains_.iteritems():
+    for key, value in domains_.items():
         domains_[key] = ".".join(value)
 
     domains_[""] = config["host"]
@@ -268,7 +271,7 @@ def start(config):
 
 
 def iter_procs(servers):
-    for servers in servers.values():
+    for servers in list(servers.values()):
         for port, server in servers:
             yield server.proc
 
@@ -289,7 +292,7 @@ def set_computed_defaults(config):
 
 def merge_json(base_obj, override_obj):
     rv = {}
-    for key, value in base_obj.iteritems():
+    for key, value in base_obj.items():
         if key not in override_obj:
             rv[key] = value
         else:

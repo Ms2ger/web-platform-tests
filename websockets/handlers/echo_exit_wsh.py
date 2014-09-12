@@ -1,7 +1,7 @@
 #!/usr/bin/python
 from mod_pywebsocket import msgutil
 
-_GOODBYE_MESSAGE = u'Goodbye'
+_GOODBYE_MESSAGE = 'Goodbye'
 
 def web_socket_do_extra_handshake(request):
     # This example handler accepts any request. See origin_check_wsh.py for how
@@ -15,7 +15,7 @@ def web_socket_transfer_data(request):
         line = request.ws_stream.receive_message()
         if line is None:
             return
-        if isinstance(line, unicode):
+        if isinstance(line, str):
             if line == _GOODBYE_MESSAGE:
                 return
 
