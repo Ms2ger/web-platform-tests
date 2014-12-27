@@ -25,39 +25,31 @@ promise_test(function() {
   });
 }, "RSA-OAEP encrypt/decrypt round-trip");
 
+promise_test(function() {
+  var alg = {
+    name: "RSA-OAEP",
+    hash: "SHA-256",
+    modulusLength: 2048,
+    publicExponent: new Uint8Array([0x01, 0x00, 0x01])
+  };
+
+  var data = crypto.getRandomValues(new Uint8Array(128));
+
+  return crypto.subtle.generateKey(alg, false, ['encrypt', 'decrypt']).then(function(x) {
+    return Promise.all([
+      x.privateKey,
+      crypto.subtle.encrypt(alg, x.publicKey, data)
+    ]);
+  }).then(function(values) {
+    var privKey = values[0];
+    var encrypted = values[1];
+    return crypto.subtle.decrypt(alg, privKey, encrypted);
+  }).then(function(x) {
+    assert_true(util.memcmp(x, data));
+  });
+}, "RSA-OAEP key generation and encrypt/decrypt round-trip (SHA-256)");
+
 /*
-// -----------------------------------------------------------------------------
-TestArray.addTest(
-  "RSA-OAEP key generation and encrypt/decrypt round-trip (SHA-256)",
-  function () {
-    var that = this;
-    var alg = {
-      name: "RSA-OAEP",
-      hash: "SHA-256",
-      modulusLength: 2048,
-      publicExponent: new Uint8Array([0x01, 0x00, 0x01])
-    };
-
-    var privKey, pubKey, data = crypto.getRandomValues(new Uint8Array(128));
-    function setKey(x) { pubKey = x.publicKey; privKey = x.privateKey; }
-    function doEncrypt() {
-      return crypto.subtle.encrypt(alg, pubKey, data);
-    }
-    function doDecrypt(x) {
-      return crypto.subtle.decrypt(alg, privKey, x);
-    }
-
-    crypto.subtle.generateKey(alg, false, ['encrypt', 'decrypt'])
-      .then(setKey, error(that))
-      .then(doEncrypt, error(that))
-      .then(doDecrypt, error(that))
-      .then(
-        memcmp_complete(that, data),
-        error(that)
-      );
-  }
-);
-
 // -----------------------------------------------------------------------------
 TestArray.addTest(
   "RSA-OAEP decryption known answer",
