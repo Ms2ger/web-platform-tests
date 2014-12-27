@@ -49,25 +49,17 @@ promise_test(function() {
   });
 }, "RSA-OAEP key generation and encrypt/decrypt round-trip (SHA-256)");
 
+promise_test(function() {
+  var alg = {name: "RSA-OAEP", hash: "SHA-1"};
+  return crypto.subtle.importKey("pkcs8", tv.rsaoaep.pkcs8, alg, false,
+                                 ['decrypt']).then(function(x) {
+    return crypto.subtle.decrypt(alg, x, tv.rsaoaep.result);
+  }).then(function(x) {
+    assert_true(util.memcmp(x, tv.rsaoaep.data));
+  });
+}, "RSA-OAEP decryption known answer");
+
 /*
-// -----------------------------------------------------------------------------
-TestArray.addTest(
-  "RSA-OAEP decryption known answer",
-  function () {
-    var that = this;
-    var alg = {name: "RSA-OAEP", hash: "SHA-1"};
-
-    function doDecrypt(x) {
-      return crypto.subtle.decrypt(alg, x, tv.rsaoaep.result);
-    }
-    function fail() { error(that); }
-
-    crypto.subtle.importKey("pkcs8", tv.rsaoaep.pkcs8, alg, false, ['decrypt'])
-      .then( doDecrypt, fail )
-      .then( memcmp_complete(that, tv.rsaoaep.data), fail );
-  }
-);
-
 // -----------------------------------------------------------------------------
 TestArray.addTest(
   "RSA-OAEP input data length checks (2048-bit key)",
