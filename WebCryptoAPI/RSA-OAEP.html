@@ -8,39 +8,24 @@
 <div id=log></div>
 <script>
 "use strict";
+
+promise_test(function() {
+  var alg = {name: "RSA-OAEP", hash: "SHA-1"};
+
+  return Promise.all([
+    crypto.subtle.importKey("pkcs8", tv.rsaoaep.pkcs8, alg, false, ['decrypt']),
+    crypto.subtle.importKey("spki", tv.rsaoaep.spki, alg, false, ['encrypt'])
+      .then(function(pubKey) { return crypto.subtle.encrypt(alg, pubKey, tv.rsaoaep.data); })
+  ]).then(function(values) {
+    var privKey = values[0];
+    var encrypted = values[1];
+    return crypto.subtle.decrypt(alg, privKey, encrypted);
+  }).then(function(x) {
+    assert_true(util.memcmp(x, tv.rsaoaep.data));
+  });
+}, "RSA-OAEP encrypt/decrypt round-trip");
+
 /*
-// -----------------------------------------------------------------------------
-TestArray.addTest(
-  "RSA-OAEP encrypt/decrypt round-trip",
-  function () {
-    var that = this;
-    var privKey, pubKey;
-    var alg = {name: "RSA-OAEP", hash: "SHA-1"};
-
-    var privKey, pubKey;
-    function setPriv(x) { privKey = x; }
-    function setPub(x) { pubKey = x; }
-    function doEncrypt() {
-      return crypto.subtle.encrypt(alg, pubKey, tv.rsaoaep.data);
-    }
-    function doDecrypt(x) {
-      return crypto.subtle.decrypt(alg, privKey, x);
-    }
-
-    Promise.all([
-      crypto.subtle.importKey("pkcs8", tv.rsaoaep.pkcs8, alg, false, ['decrypt'])
-          .then(setPriv, error(that)),
-      crypto.subtle.importKey("spki", tv.rsaoaep.spki, alg, false, ['encrypt'])
-          .then(setPub, error(that))
-    ]).then(doEncrypt, error(that))
-      .then(doDecrypt, error(that))
-      .then(
-        memcmp_complete(that, tv.rsaoaep.data),
-        error(that)
-      );
-  }
-);
-
 // -----------------------------------------------------------------------------
 TestArray.addTest(
   "RSA-OAEP key generation and encrypt/decrypt round-trip (SHA-256)",
