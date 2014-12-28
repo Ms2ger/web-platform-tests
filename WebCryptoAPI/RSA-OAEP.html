@@ -80,46 +80,34 @@ promise_test(function(test) {
   });
 }, "RSA-OAEP input data length checks (2048-bit key)");
 
-/*
-// -----------------------------------------------------------------------------
-TestArray.addTest(
-  "RSA-OAEP key import with invalid hash",
-  function () {
-    var that = this;
-    var alg = {name: "RSA-OAEP", hash: "SHA-123"};
+promise_test(function(test) {
+  var alg = {name: "RSA-OAEP", hash: "SHA-123"};
 
-    crypto.subtle.importKey("pkcs8", tv.rsaoaep.pkcs8, alg, false, ['decrypt'])
-      .then(error(that), complete(that));
-  }
-);
+  return promise_rejects(test, "DataError",
+    crypto.subtle.importKey("pkcs8", tv.rsaoaep.pkcs8, alg, false, ['decrypt']));
+}, "RSA-OAEP key import with invalid hash");
 
-// -----------------------------------------------------------------------------
-TestArray.addTest(
-  "Test that RSA-OAEP encrypt/decrypt accepts strings as AlgorithmIdentifiers",
-  function () {
-    var that = this;
-    var alg = {
-      name: "RSA-OAEP",
-      hash: "SHA-256",
-      modulusLength: 2048,
-      publicExponent: new Uint8Array([0x01, 0x00, 0x01])
-    };
+promise_test(function(test) {
+  var alg = {
+    name: "RSA-OAEP",
+    hash: "SHA-256",
+    modulusLength: 2048,
+    publicExponent: new Uint8Array([0x01, 0x00, 0x01])
+  };
 
-    var privKey, pubKey, data = crypto.getRandomValues(new Uint8Array(128));
-    function setKey(x) { pubKey = x.publicKey; privKey = x.privateKey; }
-    function doEncrypt() {
-      return crypto.subtle.encrypt("RSA-OAEP", pubKey, data);
-    }
-    function doDecrypt(x) {
-      return crypto.subtle.decrypt("RSA-OAEP", privKey, x);
-    }
+  var data = crypto.getRandomValues(new Uint8Array(128));
 
-    crypto.subtle.generateKey(alg, false, ["encrypt", "decrypt"])
-      .then(setKey)
-      .then(doEncrypt)
-      .then(doDecrypt)
-      .then(memcmp_complete(that, data), error(that));
-  }
-);
-*/
+  return crypto.subtle.generateKey(alg, false, ["encrypt", "decrypt"]).then(function(x) {
+    return Promise.all([
+      x.privateKey,
+      crypto.subtle.encrypt("RSA-OAEP", x.publicKey, data),
+    ]);
+  }).then(function doDecrypt(values) {
+    var privKey = values[0];
+    var encrypted = values[1];
+    return crypto.subtle.decrypt("RSA-OAEP", privKey, encrypted);
+  }).then(function(x) {
+    assert_true(util.memcmp(x, data));
+  });
+}, "Test that RSA-OAEP encrypt/decrypt accepts strings as AlgorithmIdentifiers");
 </script>
