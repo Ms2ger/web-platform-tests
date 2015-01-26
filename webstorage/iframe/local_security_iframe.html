@@ -3,8 +3,10 @@
 <script src="/resources/testharnessreport.js"></script>
 <script>
 test(function() {
+  var ls = parent.localStorage;
+  document.domain = document.domain;
   assert_throws("SecurityError", function() {
-    parent.localStorage.clear();
+    ls.clear();
   });
 });
 </script>
