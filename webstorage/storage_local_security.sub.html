@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<meta charset=utf-8>
+<title>Web Storage</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<div id="log"></div>
+<script>
+async_test(function() {
+  onmessage = this.step_func(function(e) {
+    switch (e.data.type) {
+    case "start": {
+      break;
+    }
+    case "test_state": {
+      break;
+    }
+    case "result": {
+      assert_equals(e.data.test.status, e.data.test.PASS, e.data.test.message);
+      alert(JSON.stringify(e.data))
+      break;
+    }
+    case "complete": {
+      this.done();
+      break;
+    }
+    default: {
+      assert_unreached("Unexpected message: " + e.data.type);
+    }
+    }
+  });
+}, 'storage local security test');
+</script>
+<iframe src="http://{{domains[www1]}}:{{ports[http][0]}}/webstorage/iframe/local_security_iframe.html"
+        style="width: 0px; height: 0px;"></iframe>

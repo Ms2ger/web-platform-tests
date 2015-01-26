@@ -1,16 +1,10 @@
 <!DOCTYPE HTML>
-<html>
- <body>
-    <script>
-        if (('localStorage' in window) && window.localStorage != null){
-            try {
-                localStorage.setItem("Security", "false");
-                parent.localStorage.clear();
-            } catch (e) {
-                if(e.code == e['SECURITY_ERR'])
-                    localStorage.setItem("Security", "true");
-            }
-        }
-    </script>
- </body>
-</html>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script>
+test(function() {
+  assert_throws("SecurityError", function() {
+    parent.localStorage.clear();
+  });
+});
+</script>
