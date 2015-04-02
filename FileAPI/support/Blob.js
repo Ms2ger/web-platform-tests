@@ -8,6 +8,8 @@ function test_blob(fn, expectations) {
     var blob = fn();
     assert_true(blob instanceof Blob);
     assert_false(blob instanceof File);
+    assert_class_string(blob, "Blob");
+
     assert_equals(blob.type, type);
     assert_equals(blob.size, expected.length);
 
@@ -32,6 +34,8 @@ function test_blob_binary(fn, expectations) {
     var blob = fn();
     assert_true(blob instanceof Blob);
     assert_false(blob instanceof File);
+    assert_class_string(blob, "Blob");
+
     assert_equals(blob.type, type);
     assert_equals(blob.size, expected.length);
 

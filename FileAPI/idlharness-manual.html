@@ -155,8 +155,9 @@ partial interface URL {
         idl_array.add_idls(document.getElementById("idl").textContent);
 
         idl_array.add_objects({
-          FileList: [fileInput.files],
-          File: [fileInput.files[0]],
+          FileList: ['fileInput.files'],
+          File: ['fileInput.files[0]'],
+          Blob: ['fileInput.files[0].slice(0, 100, "text/plain")'],
         });
         idl_array.test();
 
