@@ -10,13 +10,10 @@
         arNumberOfScriptsParsedPerEvent.push(document.getElementsByTagName('script').length);
     }
     
-    window.testlib.addScript = function(source, attributes, parent, firstInParent,funcPrepare) {
+    window.testlib.addScript = function(source, attributes, parent, firstInParent) {
         try{
             parent = parent||document.body;
             var script = document.createElement('script');
-            if(funcPrepare) {
-                funcPrepare(script);
-            }
             if(source)script.appendChild( document.createTextNode(source) );
             for( var name in attributes){
                 if(/^on/i.test(name)) {
