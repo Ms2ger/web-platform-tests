@@ -51,5 +51,14 @@ test(function() {
     // 'LATIN SMALL LETTER DOTLESS I' (U+0131)
     var evt = document.createEvent("U\u0131Event");
   });
+  assert_throws("NOT_SUPPORTED_ERR", function() {
+    var evt = document.createEvent("");
+  });
+  assert_throws("NOT_SUPPORTED_ERR", function() {
+    var evt = document.createEvent(null);
+  });
+  assert_throws("NOT_SUPPORTED_ERR", function() {
+    var evt = document.createEvent(undefined);
+  });
 }, "Should throw NOT_SUPPORTED_ERR for unrecognized arguments");
 </script>
