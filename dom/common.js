@@ -1,4 +1,3 @@
-"use strict";
 // Written by Aryeh Gregor <ayg@aryeh.name>
 
 // TODO: iframes, contenteditable/designMode
@@ -22,6 +21,7 @@ function setupRangeTests() {
     }
     testDiv = document.createElement("div");
     testDiv.id = "test";
+    console.log("i")
     document.body.insertBefore(testDiv, document.body.firstChild);
 
     paras = [];
@@ -123,21 +123,7 @@ function setupRangeTests() {
         // Various ranges within the text node children of different
         // paragraphs.  All should be valid.
         "[paras[0].firstChild, 0, paras[0].firstChild, 0]",
-        "[paras[0].firstChild, 0, paras[0].firstChild, 1]",
-        "[paras[0].firstChild, 2, paras[0].firstChild, 8]",
-        "[paras[0].firstChild, 2, paras[0].firstChild, 9]",
-        "[paras[1].firstChild, 0, paras[1].firstChild, 0]",
-        "[paras[1].firstChild, 2, paras[1].firstChild, 9]",
-        "[detachedPara1.firstChild, 0, detachedPara1.firstChild, 0]",
-        "[detachedPara1.firstChild, 2, detachedPara1.firstChild, 8]",
-        "[foreignPara1.firstChild, 0, foreignPara1.firstChild, 0]",
-        "[foreignPara1.firstChild, 2, foreignPara1.firstChild, 8]",
         // Now try testing some elements, not just text nodes.
-        "[document.documentElement, 0, document.documentElement, 1]",
-        "[document.documentElement, 0, document.documentElement, 2]",
-        "[document.documentElement, 1, document.documentElement, 2]",
-        "[document.head, 1, document.head, 1]",
-        "[document.body, 4, document.body, 5]",
         "[foreignDoc.documentElement, 0, foreignDoc.documentElement, 1]",
         "[paras[0], 0, paras[0], 1]",
         "[detachedPara1, 0, detachedPara1, 1]",
@@ -854,6 +840,7 @@ function myInsertNode(range, node) {
     // start offset, and let reference node be the result."
     var referenceNode;
     if (range.startContainer.nodeType == Node.TEXT_NODE) {
+        console.log("AAA")
         // We aren't testing how ranges vary under mutations, and browsers vary
         // in how they mutate for splitText, so let's just force the correct
         // way.
@@ -876,8 +863,10 @@ function myInsertNode(range, node) {
     // "Otherwise, let reference node be the child of start node whose index is
     // start offset, or null if there is no such child."
     } else {
+        console.log("BBB")
         referenceNode = range.startContainer.childNodes[range.startOffset];
         if (typeof referenceNode == "undefined") {
+        console.log("CCC")
             referenceNode = null;
         }
     }
@@ -885,10 +874,12 @@ function myInsertNode(range, node) {
     // "If reference node is null, let parent be start node."
     var parent_;
     if (!referenceNode) {
+        console.log("XXX")
         parent_ = range.startContainer;
 
     // "Otherwise, let parent be the parent of reference node."
     } else {
+        console.log("YYY")
         parent_ = referenceNode.parentNode;
     }
 
@@ -904,8 +895,10 @@ function myInsertNode(range, node) {
 
     // "Pre-insert node into parent before reference node."
     try {
+        console.log("ii")
         parent_.insertBefore(node, referenceNode);
     } catch (e) {
+        console.log(e)
         return getDomExceptionName(e);
     }
 

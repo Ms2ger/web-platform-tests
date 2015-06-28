@@ -45,6 +45,7 @@ function restoreIframe(iframe, i, j) {
 }
 
 function testInsertNode(i, j) {
+    console.log("testInsertNode("+i+", "+j+")");
     var actualRange;
     var expectedRange;
     var actualNode;
@@ -133,6 +134,7 @@ function testInsertNode(i, j) {
             result = myInsertNode(expectedRange, expectedNode);
         } catch (e) {
             if (expectedDoctype != expectedIframe.contentDocument.firstChild) {
+                console.log(1)
                 expectedIframe.contentDocument.insertBefore(expectedDoctype, expectedIframe.contentDocument.firstChild);
             }
             throw e;
@@ -143,9 +145,11 @@ function testInsertNode(i, j) {
                     actualRange.insertNode(actualNode);
                 } catch (e) {
                     if (expectedDoctype != expectedIframe.contentDocument.firstChild) {
+                console.log(2)
                         expectedIframe.contentDocument.insertBefore(expectedDoctype, expectedIframe.contentDocument.firstChild);
                     }
                     if (actualDoctype != actualIframe.contentDocument.firstChild) {
+                console.log(3)
                         actualIframe.contentDocument.insertBefore(actualDoctype, actualIframe.contentDocument.firstChild);
                     }
                     throw e;
@@ -157,9 +161,11 @@ function testInsertNode(i, j) {
                 actualRange.insertNode(actualNode);
             } catch (e) {
                 if (expectedDoctype != expectedIframe.contentDocument.firstChild) {
+                console.log(4)
                     expectedIframe.contentDocument.insertBefore(expectedDoctype, expectedIframe.contentDocument.firstChild);
                 }
                 if (actualDoctype != actualIframe.contentDocument.firstChild) {
+                console.log(5)
                     actualIframe.contentDocument.insertBefore(actualDoctype, actualIframe.contentDocument.firstChild);
                 }
                 throw e;
@@ -236,10 +242,10 @@ function testInsertNode(i, j) {
 
 testRanges.unshift('"detached"');
 
-var iStart = 0;
-var iStop = testRangesShort.length;
-var jStart = 0;
-var jStop = testNodesShort.length;
+var iStart = 1;
+var iStop = 2;
+var jStart = 1;
+var jStop = 2;
 
 if (/subtest=[0-9]+,[0-9]+/.test(location.search)) {
     var matches = /subtest=([0-9]+),([0-9]+)/.exec(location.search);
