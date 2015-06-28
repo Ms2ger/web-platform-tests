@@ -29,7 +29,7 @@ function setupRangeTests() {
     paras[0].setAttribute("id", "a");
     // Test some diacritics, to make sure browsers are using code units here
     // and not something like grapheme clusters.
-    paras[0].textContent = "A\u0308b\u0308c\u0308d\u0308e\u0308f\u0308g\u0308h\u0308\n";
+    paras[0].textContent = "A\n";
     testDiv.appendChild(paras[0]);
 
     paras.push(document.createElement("p"));
@@ -120,49 +120,7 @@ function setupRangeTests() {
     foreignDoctype = foreignDoc.doctype;
 
     testRangesShort = [
-        // Various ranges within the text node children of different
-        // paragraphs.  All should be valid.
-        "[paras[0].firstChild, 0, paras[0].firstChild, 0]",
-        "[paras[0].firstChild, 0, paras[0].firstChild, 1]",
-        "[paras[0].firstChild, 2, paras[0].firstChild, 8]",
-        "[paras[0].firstChild, 2, paras[0].firstChild, 9]",
-        "[paras[1].firstChild, 0, paras[1].firstChild, 0]",
-        "[paras[1].firstChild, 2, paras[1].firstChild, 9]",
-        "[detachedPara1.firstChild, 0, detachedPara1.firstChild, 0]",
-        "[detachedPara1.firstChild, 2, detachedPara1.firstChild, 8]",
-        "[foreignPara1.firstChild, 0, foreignPara1.firstChild, 0]",
-        "[foreignPara1.firstChild, 2, foreignPara1.firstChild, 8]",
-        // Now try testing some elements, not just text nodes.
-        "[document.documentElement, 0, document.documentElement, 1]",
-        "[document.documentElement, 0, document.documentElement, 2]",
-        "[document.documentElement, 1, document.documentElement, 2]",
-        "[document.head, 1, document.head, 1]",
-        "[document.body, 4, document.body, 5]",
-        "[foreignDoc.documentElement, 0, foreignDoc.documentElement, 1]",
         "[paras[0], 0, paras[0], 1]",
-        "[detachedPara1, 0, detachedPara1, 1]",
-        // Now try some ranges that span elements.
-        "[paras[0].firstChild, 0, paras[1].firstChild, 0]",
-        "[paras[0].firstChild, 0, paras[1].firstChild, 8]",
-        "[paras[0].firstChild, 3, paras[3], 1]",
-        // How about something that spans a node and its descendant?
-        "[paras[0], 0, paras[0].firstChild, 7]",
-        "[testDiv, 2, paras[4], 1]",
-        // Then a few more interesting things just for good measure.
-        "[document, 0, document, 1]",
-        "[document, 0, document, 2]",
-        "[comment, 2, comment, 3]",
-        "[testDiv, 0, comment, 5]",
-        "[foreignDoc, 1, foreignComment, 2]",
-        "[foreignDoc.body, 0, foreignTextNode, 36]",
-        "[xmlDoc, 1, xmlComment, 0]",
-        "[detachedTextNode, 0, detachedTextNode, 8]",
-        "[detachedForeignTextNode, 0, detachedForeignTextNode, 8]",
-        "[detachedXmlTextNode, 0, detachedXmlTextNode, 8]",
-        "[detachedComment, 3, detachedComment, 4]",
-        "[detachedForeignComment, 0, detachedForeignComment, 1]",
-        "[detachedXmlComment, 2, detachedXmlComment, 6]",
-        "[docfrag, 0, docfrag, 0]",
     ];
 
     testRanges = testRangesShort.concat([
@@ -286,28 +244,7 @@ function setupRangeTests() {
     ];
 
     testNodesShort = [
-        "paras[0]",
         "paras[0].firstChild",
-        "paras[1].firstChild",
-        "foreignPara1",
-        "foreignPara1.firstChild",
-        "detachedPara1",
-        "detachedPara1.firstChild",
-        "document",
-        "detachedDiv",
-        "foreignDoc",
-        "foreignPara2",
-        "xmlDoc",
-        "xmlElement",
-        "detachedTextNode",
-        "foreignTextNode",
-        "processingInstruction",
-        "detachedProcessingInstruction",
-        "comment",
-        "detachedComment",
-        "docfrag",
-        "doctype",
-        "foreignDoctype",
     ];
 
     testNodes = testNodesShort.concat([
