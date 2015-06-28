@@ -22,6 +22,7 @@ function setupRangeTests() {
     }
     testDiv = document.createElement("div");
     testDiv.id = "test";
+    console.log("i");
     document.body.insertBefore(testDiv, document.body.firstChild);
 
     paras = [];
@@ -769,80 +770,19 @@ function myExtractContents(range) {
  * a spec bug.
  */
 function myInsertNode(range, node) {
-    // "If the detached flag is set, throw an "InvalidStateError" exception and
-    // terminate these steps."
-    //
-    // Assume that if accessing collapsed throws, it's detached.
-    try {
-        range.collapsed;
-    } catch (e) {
-        return "INVALID_STATE_ERR";
-    }
-
-    // "If start node is a Comment node, or a Text node whose parent is null,
-    // throw an "HierarchyRequestError" exception and terminate these steps."
-    if (range.startContainer.nodeType == Node.COMMENT_NODE
-    || (range.startContainer.nodeType == Node.TEXT_NODE
-    && !range.startContainer.parentNode)) {
-        return "HIERARCHY_REQUEST_ERR";
-    }
-
-    // "If start node is a Text node, split it with offset context object's
-    // start offset, and let reference node be the result."
-    var referenceNode;
-    if (range.startContainer.nodeType == Node.TEXT_NODE) {
-        // We aren't testing how ranges vary under mutations, and browsers vary
-        // in how they mutate for splitText, so let's just force the correct
-        // way.
-        var start = [range.startContainer, range.startOffset];
-        var end = [range.endContainer, range.endOffset];
-
-        referenceNode = range.startContainer.splitText(range.startOffset);
-
-        if (start[0] == end[0]
-        && end[1] > start[1]) {
-            end[0] = referenceNode;
-            end[1] -= start[1];
-        } else if (end[0] == start[0].parentNode
-        && end[1] > indexOf(referenceNode)) {
-            end[1]++;
-        }
-        range.setStart(start[0], start[1]);
-        range.setEnd(end[0], end[1]);
-
-    // "Otherwise, let reference node be the child of start node whose index is
-    // start offset, or null if there is no such child."
-    } else {
-        referenceNode = range.startContainer.childNodes[range.startOffset];
-        if (typeof referenceNode == "undefined") {
-            referenceNode = null;
-        }
-    }
-
     // "If reference node is null, let parent be start node."
     var parent_;
-    if (!referenceNode) {
-        parent_ = range.startContainer;
-
-    // "Otherwise, let parent be the parent of reference node."
-    } else {
-        parent_ = referenceNode.parentNode;
-    }
-
-    // "Let new offset be the index of reference node, or parent's length if
-    // reference node is null."
-    var newOffset = referenceNode ? indexOf(referenceNode) : nodeLength(parent_);
-
-    // "Add node's length to new offset, if node is a DocumentFragment.
-    // Otherwise add one to new offset."
-    newOffset += node.nodeType == Node.DOCUMENT_FRAGMENT_NODE
-        ? nodeLength(node)
-        : 1;
+    console.log("YYY");
+    parent_ = document.createElement("p");
+    parent_.textContent = "A"
+    node = parent_.firstChild
 
     // "Pre-insert node into parent before reference node."
     try {
-        parent_.insertBefore(node, referenceNode);
+        console.log("ii");
+        parent_.insertBefore(node, node);
     } catch (e) {
+        console.log(e);
         return getDomExceptionName(e);
     }
 
