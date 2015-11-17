@@ -1,7 +1,5 @@
 iframe = document.createElement("IFRAME");
-iframe.src = "about:blank";
 document.body.appendChild(iframe);
-iframe.contentWindow.document.body.textContent = "Nothing to see here.";
 
 storageEventList = new Array();
 iframe.contentWindow.addEventListener("storage", function(e) {
