@@ -11,7 +11,7 @@ import sys
 import tarfile
 import traceback
 import zipfile
-from cStringIO import StringIO
+from io import StringIO
 from collections import defaultdict
 from urlparse import urljoin
 
