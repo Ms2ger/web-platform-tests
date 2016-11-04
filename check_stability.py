@@ -318,16 +318,16 @@ class pwd(object):
 
 
 def fetch_wpt_master():
-    git = get_git_cmd(os.path.join(os.path.abspath(os.curdir), "w3c", "web-platform-tests"))
+    git = get_git_cmd(os.path.join(os.path.abspath(os.curdir), "Ms2ger", "web-platform-tests"))
     git("fetch", "https://github.com/w3c/web-platform-tests.git", "master:master")
 
 
 def get_sha1():
-    git = get_git_cmd(os.path.join(os.path.abspath(os.curdir), "w3c", "web-platform-tests"))
+    git = get_git_cmd(os.path.join(os.path.abspath(os.curdir), "Ms2ger", "web-platform-tests"))
     return git("rev-parse", "HEAD").strip()
 
 def build_manifest():
-    with pwd(os.path.join(os.path.abspath(os.curdir), "w3c", "web-platform-tests")):
+    with pwd(os.path.join(os.path.abspath(os.curdir), "Ms2ger", "web-platform-tests")):
         # TODO: Call the manifest code directly
         call("python", "manifest")
 
@@ -341,7 +341,7 @@ def install_wptrunner():
 
 def get_files_changed():
     root = os.path.abspath(os.curdir)
-    git = get_git_cmd("%s/w3c/web-platform-tests" % root)
+    git = get_git_cmd("%s/Ms2ger/web-platform-tests" % root)
     branch_point = git("merge-base", "HEAD", "master").strip()
     logger.debug("Branch point from master: %s" % branch_point)
     logger.debug(git("log", "--oneline", "%s.." % branch_point))
@@ -349,7 +349,7 @@ def get_files_changed():
     if not files:
         return []
     assert files[-1] == "\0"
-    return ["%s/w3c/web-platform-tests/%s" % (root, item)
+    return ["%s/Ms2ger/web-platform-tests/%s" % (root, item)
             for item in files[:-1].split("\0")]
 
 
