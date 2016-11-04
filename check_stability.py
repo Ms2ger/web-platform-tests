@@ -11,7 +11,7 @@ import sys
 import tarfile
 import traceback
 import zipfile
-from io import StringIO
+from io import BytesIO
 from collections import defaultdict
 from urlparse import urljoin
 
@@ -263,7 +263,7 @@ def seekable(fileobj):
     try:
         fileobj.seek(fileobj.tell())
     except Exception:
-        return StringIO(fileobj.read())
+        return BytesIO(fileobj.read())
     else:
         return fileobj
 
