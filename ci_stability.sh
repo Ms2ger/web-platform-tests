@@ -22,7 +22,7 @@ hosts_fixup() {
 
 
 test_stability() {
-    python check_stability.py $PRODUCT
+    python3 check_stability.py $PRODUCT
 }
 
 main() {
