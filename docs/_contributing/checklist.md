@@ -190,7 +190,7 @@ The test renders to a fixed, static page with no animation.
 </label>
 
 
-[review index]: {{ site.baseurl }}{% link _reviewing-tests/index.md %}
+[review index]: {{ site.baseurl }}{% link _contributing/index.md %}
 [general guidelines]: {{ site.baseurl }}{% link _writing-tests/general-guidelines.md %}
 [reftest]: {{ site.baseurl }}{% link _writing-tests/reftests.md %}
 [scripttest]: {{ site.baseurl }}{% link _writing-tests/testharness.md %}

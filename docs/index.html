@@ -2,20 +2,41 @@
 layout: page
 ---
 
+<p>web-platform-tests is a cross-browser testsuite for the
+[web platform][web-platform].
+
+<p>If you get stuck or want clarification about anything, feel free to
+ask on either the [mailing list][public-test-infra] or [IRC][]
+([webclient][web irc], join channel `#testing`); IRC is generally
+busiest during the European working day but frequently has people on
+it at all times and should probably be the general first port of call
+for any help.
+
+
+## Test Layout
+
+Each top level directory in the repository corresponds to tests for a
+single specification, with the exception of `css/` which contains
+testsuites for CSS WG specifications. For W3C specs, these directories
+are typically named after the shortname of the spec (i.e. the name
+used for snapshot publications under `/TR/`); for WHATWG specs, they
+are typically named after the subdomain of the spec (i.e. trimming
+`.spec.whatwg.org` from the URL); for other specs, something deemed
+sensible is used. In any case, there are occasional exceptions for
+historic reasons.
+
+Within the specification-specific directory there are two common ways
+of laying out tests: the first is a flat structure which is sometimes
+adopted for very short specifications; the alternative is a nested
+structure with each subdirectory corresponding to the id of a heading
+in the specification. The latter provides some implicit metadata about
+the part of a specification being tested according to its location in
+the filesystem, and is preferred for larger specifications.
+
+
+
 <nav class="home">
   <ul>
-    <li>
-      <a href="{{ site.baseurl }}{% link introduction.md %}">
-        <div>
-          {% include svg/octicons/tools.svg %}
-        </div>
-        <h2>
-          Introduction
-        </h2>
-      </a>
-      <p>You should probably start here! Contains a high-level
-         overview of the testsuite and how to get set up locally.</p>
-    </li>
     <li>
       <a href="{{ site.baseurl }}{% link _writing-tests/index.md %}">
         <div>
@@ -40,26 +61,26 @@ layout: page
          already exist.</p>
     </li>
     <li>
-      <a href="{{ site.baseurl }}{% link _reviewing-tests/index.md %}">
+      <a href="{{ site.baseurl }}{% link _contributing/index.md %}">
         <div>
           {% include svg/octicons/git-pull-request.svg %}
         </div>
         <h2>
-          Reviewing Tests
+          Contributing
         </h2>
       </a>
-      <p>Some hints and tips for those reviewing tests.</p>
+      <p>Submitting and reviewing tests.</p>
     </li>
     <li>
-      <a href="{{ site.baseurl }}{% link _appendix/index.md %}">
+      <a href="{{ site.baseurl }}{% link about.md %}">
         <div>
-          {% include svg/octicons/package.svg %}
+          {% include svg/octicons/tools.svg %}
         </div>
         <h2>
-          Appendices
+          About
         </h2>
       </a>
-      <p>A load of other useful resources.</p>
+      <p>More information about the project.</p>
     </li>
   </ul>
 </nav>

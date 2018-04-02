@@ -4,8 +4,14 @@ title: Writing Tests
 order: -1
 ---
 
-If you haven't already, it's strongly recommended to read
-the [introduction][] first, as it introduces the various test types.
+## Testsuite Design
+
+The vast majority of the testsuite is formed of HTML pages, which can
+be loaded in a browser and either programmatically provide a result or
+provide a set of steps to run the test and obtain the result.
+
+The tests are, in general, short, cross-platform, and self-contained,
+and should be easy to run in any browser.
 
 There's also a load of [general guidelines][] that apply to all tests.
 
@@ -48,13 +54,33 @@ tests, which are used exclusively for testing the WebDriver protocol
 itself. There is currently no documentation about these tests,
 however.
 
+The testsuite has a few types of tests, outlined below:
+
+* [testharness.js][] tests, which are run
+  through a JS harness and report their result back with JS.
+
+* [Reftests][], which render two (or more) web
+  pages and combine them with equality assertions about their
+  rendering (e.g., `A.html` and `B.html` must render identically), run
+  either by the user switching between tabs/windows and trying to
+  observe differences or through automated scripts.
+
+* [Visual tests][visual] which display a page where the
+  result is determined either by a human looking at it or by comparing
+  it with a saved screenshot for that user agent on that platform.
+
+* [Manual tests][manual], which rely on a human to run
+  them and determine their result.
+
+* WebDriver tests, which are used for testing the WebDriver protocol
+  itself.
+
 ## Submitting Tests
 
 Once you've written tests, please submit them using
 the [typical GitHub Pull Request workflow][submission-process]; please
 make sure you run the [`lint` script][lint-tool] before opening a pull request!
 
-[introduction]: {{ site.baseurl }}{% link introduction.md %}
 [file names]: {{ site.baseurl }}{% link _writing-tests/file-names.md %}
 [general guidelines]: {{ site.baseurl }}{% link _writing-tests/general-guidelines.md %}
 [reftests]: {{ site.baseurl }}{% link _writing-tests/reftests.md %}

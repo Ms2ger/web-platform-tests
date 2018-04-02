@@ -42,7 +42,7 @@ no need to announce your review request, as soon as you make a Pull Request
 GitHub will inform interested parties.
 
 [repo]: https://github.com/w3c/web-platform-tests/
-[github-intro]: {{ site.baseurl }}{% link _appendix/github-intro.md %}
+[github-intro]: {{ site.baseurl }}{% link _contributing/github-intro.md %}
 [github flow]: https://guides.github.com/introduction/flow/
 [public-test-infra]: https://lists.w3.org/Archives/Public/public-test-infra/
 [IRC]: irc://irc.w3.org:6667/testing

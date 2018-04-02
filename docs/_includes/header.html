@@ -17,9 +17,6 @@
 
       <div class="trigger">
         <ul>
-          <li><a class="page-link" href="{{ site.baseurl }}{% link introduction.md %}">
-              Introduction
-            </a>
           <li><a class="page-link" href="{{ site.baseurl }}{% link _writing-tests/index.md %}">
               Writing Tests
             </a>
@@ -38,12 +35,12 @@
           <li><a class="page-link" href="{{ site.baseurl }}{% link _running-tests/index.md %}">
               Running Tests
             </a>
-          <li><a class="page-link" href="{{ site.baseurl }}{% link _reviewing-tests/index.md %}">
-              Reviewing Tests
+          <li><a class="page-link" href="{{ site.baseurl }}{% link _contributing/index.md %}">
+              Contributing
             </a>
               <ul>
-                {% assign reviewing_tests = site.reviewing-tests | sort: "order"  %}
-                {% for page in reviewing_tests %}
+                {% assign contributing = site.contributing | sort: "order"  %}
+                {% for page in contributing %}
                 {% if page.title and page.order != -1 %}
                 <li>
                   <a class="page-link" href="{{ page.url | relative_url }}">
@@ -53,21 +50,9 @@
                 {% endif %}
                 {% endfor %}
               </ul>
-          <li><a class="page-link" href="{{ site.baseurl }}{% link _appendix/index.md %}">
-              Appendices
+          <li><a class="page-link" href="{{ site.baseurl }}{% link about.md %}">
+              About
             </a>
-              <ul>
-                {% assign appendix = site.appendix | sort: "order"  %}
-                {% for page in appendix %}
-                {% if page.title and page.order != -1 %}
-                <li>
-                  <a class="page-link" href="{{ page.url | relative_url }}">
-                    {{ page.title | escape }}
-                  </a>
-                </li>
-                {% endif %}
-                {% endfor %}
-              </ul>
         </ul>
       </div>
     </nav>

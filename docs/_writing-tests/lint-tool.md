@@ -11,10 +11,14 @@ web-platform-tests working directory like this:
 ./wpt lint
 ```
 
-The lint tool is also run automatically for every submitted pull request,
-and reviewers will not merge branches with tests that have lint errors, so
-you must either [fix all lint errors](#fixing-lint-errors), or you must
-[whitelist test files](#updating-the-whitelist) to suppress the errors.
+The lint tool is also run automatically for every submitted pull request, and
+reviewers will not merge branches with tests that have lint errors, so you must
+[fix any errors](#fixing-lint-errors) the lint tool reports.
+
+In the unusual case of error reports for things essential to a certain test or
+that for other exceptional reasons shouldn't prevent a merge of a test,
+[whitelist it](#updating-the-whitelist) to suppress the errors.
+
 
 ## Fixing lint errors
 
