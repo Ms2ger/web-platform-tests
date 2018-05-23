@@ -27,7 +27,6 @@ from wptserve import config
 from wptserve.logger import set_logger
 from wptserve.handlers import filesystem_path, wrap_pipeline
 from wptserve.utils import get_port, HTTPException
-from mod_pywebsocket import standalone as pywebsocket
 
 
 def replace_end(s, old, new):
@@ -522,6 +521,8 @@ class WebSocketDaemon(object):
                     "-d", doc_root,
                     "-w", handlers_root,
                     "--log-level", log_level]
+
+        from mod_pywebsocket import standalone as pywebsocket
 
         if ssl_config is not None:
             # This is usually done through pywebsocket.main, however we're
