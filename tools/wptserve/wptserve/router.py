@@ -2,6 +2,8 @@ import itertools
 import re
 import types
 
+from six import binary_type, text_type
+
 from .logger import get_logger
 
 any_method = object()
@@ -75,6 +77,8 @@ class RouteCompiler(object):
 def compile_path_match(route_pattern):
     """tokens: / or literal or match or *"""
 
+    assert isinstance(route_pattern, text_type)
+
     tokenizer = RouteTokenizer()
     tokens, unmatched = tokenizer.scan(route_pattern)
 
@@ -135,7 +139,7 @@ class Router(object):
                         object and the response object.
 
         """
-        if type(methods) in types.StringTypes or methods in (any_method, "*"):
+        if type(methods) in (binary_type, text_type) or methods in (any_method, "*"):
             methods = [methods]
         for method in methods:
             self.routes.append((method, compile_path_match(path), handler))

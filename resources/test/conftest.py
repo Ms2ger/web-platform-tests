@@ -5,6 +5,7 @@ import os
 import html5lib
 import pytest
 from selenium import webdriver
+from six import text_type
 
 from wptserver import WPTServer
 
@@ -43,7 +44,7 @@ class HTMLItem(pytest.Item, pytest.Collector):
                 name = element.text
                 continue
             if element.attrib.get('id') == 'expected':
-                self.expected = json.loads(unicode(element.text))
+                self.expected = json.loads(text_type(element.text))
                 continue
 
         if not name:
