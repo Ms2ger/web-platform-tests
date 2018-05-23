@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from datetime import datetime, timedelta
-import Cookie
+from six.moves import http_cookies as Cookie
 import json
 import types
 import uuid
