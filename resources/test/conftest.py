@@ -22,10 +22,11 @@ def pytest_collect_file(path, parent):
 
 def pytest_configure(config):
     config.driver = webdriver.Firefox(firefox_binary=config.getoption("--binary"))
+    config.add_cleanup(config.driver.quit)
+
     config.server = WPTServer(WPT_ROOT)
     config.server.start()
     config.add_cleanup(config.server.stop)
-    config.add_cleanup(config.driver.quit)
 
 class HTMLItem(pytest.Item, pytest.Collector):
     def __init__(self, filename, parent):
