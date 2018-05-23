@@ -1,8 +1,8 @@
-import BaseHTTPServer
+import six.moves.BaseHTTPServer as BaseHTTPServer
 import errno
 import os
 import socket
-from SocketServer import ThreadingMixIn
+from six.moves.socketserver import ThreadingMixIn
 import ssl
 import sys
 import threading

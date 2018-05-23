@@ -1,8 +1,10 @@
 import socket
 
+from six import iteritems
+
 def invert_dict(dict):
     rv = {}
-    for key, values in dict.iteritems():
+    for key, values in iteritems(dict):
         for value in values:
             if value in rv:
                 raise ValueError
