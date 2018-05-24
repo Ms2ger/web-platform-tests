@@ -86,7 +86,8 @@ class InputFile(object):
         assert bytes_remaining == 0 or self._buf_position == self._file_position, (
             "After reading buffer position (%i) didn't match file position (%i)" %
             (self._buf_position, self._file_position))
-
+        print(type(old_data), old_data)
+        print(type(new_data))
         return old_data + new_data
 
     def tell(self):

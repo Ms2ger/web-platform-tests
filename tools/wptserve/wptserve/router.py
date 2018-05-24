@@ -47,12 +47,14 @@ class RouteCompiler(object):
             tokens = itertools.chain([("slash", None)], tokens)
 
         for token in tokens:
+            print(token)
             re_parts.append(func_map[token[0]](token))
 
         if self.star_seen:
             re_parts.append(")")
         re_parts.append("$")
 
+        print(["%r" % p for p in re_parts])
         return re.compile("".join(re_parts))
 
     def process_literal(self, token):
@@ -143,6 +145,7 @@ class Router(object):
         if isinstance(methods, (binary_type, text_type)) or methods is any_method:
             methods = [methods]
         for method in methods:
+            print(type(path))
             self.routes.append((method, compile_path_match(path), handler))
             self.logger.debug("Route pattern: %s" % self.routes[-1][1].pattern)
 
