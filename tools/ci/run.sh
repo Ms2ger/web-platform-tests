@@ -7,4 +7,6 @@ cd $WPT_ROOT
 
 if [[ $RUN_JOB -eq 1 ]]; then
     $SCRIPT
+else
+    echo "This job will not be run."
 fi
