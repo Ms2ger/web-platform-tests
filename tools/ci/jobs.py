@@ -81,6 +81,7 @@ def get_paths(**kwargs):
 
 
 def get_jobs(paths, **kwargs):
+    print(paths)
     jobs = set()
 
     rules = {}
@@ -90,6 +91,8 @@ def get_jobs(paths, **kwargs):
     for key, value in iteritems(job_path_map):
         if includes is None or key in includes:
             rules[key] = Ruleset(value)
+
+    print(rules)
 
     for path in paths:
         for job in list(rules.keys()):
@@ -105,6 +108,8 @@ def get_jobs(paths, **kwargs):
         for job, path_re in iteritems(job_path_map):
             if ".*" in path_re:
                 jobs.add(job)
+
+    print(jobs)
 
     return jobs
 
