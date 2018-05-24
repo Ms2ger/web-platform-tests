@@ -21,18 +21,23 @@ class WPTServer(object):
         self.devnull = open(os.devnull, 'w')
         self.proc = subprocess.Popen(
             [os.path.join(self.wpt_root, 'wpt'), 'serve'],
-            stderr=self.devnull,
+            #stderr=self.devnull,
             cwd=self.wpt_root)
 
         for retry in range(5):
             # Exponential backoff.
             time.sleep(2 ** retry)
-            if self.proc.poll() != None:
+            x = self.proc.poll()
+            print(x)
+            if x != None:
+                print("poll - break")
                 break
             try:
                 urllib.request.urlopen(self.base_url, timeout=1)
+                print("success")
                 return
             except urllib.error.URLError:
+                print("URLError")
                 pass
 
         raise Exception('Could not start wptserve.')
