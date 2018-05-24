@@ -7,7 +7,7 @@ import re
 import time
 import types
 import uuid
-from cStringIO import StringIO
+from six.moves import cStringIO as StringIO
 
 from six import text_type
 
@@ -285,7 +285,7 @@ class ReplacementTokenizer(object):
         return ("arguments", re.split(r",\s*", token[1:-1]) if unwrapped else [])
 
     def ident(self, token):
-        return ("ident", token)
+        return ("ident", token.decode('utf8'))
 
     def index(self, token):
         token = token[1:-1]
@@ -297,7 +297,7 @@ class ReplacementTokenizer(object):
 
     def var(self, token):
         token = token[:-1]
-        return ("var", token)
+        return ("var", token.decode('utf8'))
 
     def tokenize(self, string):
         return self.scanner.scan(string)[0]
@@ -478,7 +478,7 @@ def template(request, content, escape_type="html"):
                     "unexpected token type %s (token '%r'), expected ident or arguments" % (ttype, field)
                 )
 
-        assert isinstance(value, (int,) + types.StringTypes), tokens
+        assert isinstance(value, (int, text_type)), tokens
 
         if variable is not None:
             variables[variable] = value
@@ -490,7 +490,7 @@ def template(request, content, escape_type="html"):
         #TODO: read the encoding of the response
         return escape_func(text_type(value)).encode("utf-8")
 
-    template_regexp = re.compile(r"{{([^}]*)}}")
+    template_regexp = re.compile(br"{{([^}]*)}}")
     new_content = template_regexp.sub(config_replacement, content)
 
     return new_content

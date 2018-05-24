@@ -1,8 +1,8 @@
-import BaseHTTPServer
+import six.moves.BaseHTTPServer as BaseHTTPServer
 import errno
 import os
 import socket
-from SocketServer import ThreadingMixIn
+from six.moves.socketserver import ThreadingMixIn
 import ssl
 import sys
 import threading
@@ -10,6 +10,7 @@ import time
 import traceback
 import types
 
+from six import binary_type, text_type
 from six.moves.urllib.parse import urlsplit, urlunsplit
 
 from . import routes as default_routes
@@ -80,7 +81,7 @@ class RequestRewriter(object):
         :param output_path: Path to replace the input path with in
                             the request.
         """
-        if type(methods) in types.StringTypes:
+        if type(methods) in (binary_type, text_type):
             methods = [methods]
         self.rules[input_path] = (methods, output_path)
 
@@ -256,8 +257,9 @@ class WebTestRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 except HTTPException as e:
                     response.set_error(e.code, e.message)
                 except Exception as e:
-                    if e.message:
-                        err = [e.message]
+                    message = getattr(e, "message", None)
+                    if message is not None:
+                        err = [message]
                     else:
                         err = []
                     err.append(traceback.format_exc())

@@ -1,7 +1,7 @@
 import base64
 import cgi
-import Cookie
-import StringIO
+from six.moves import http_cookies as Cookie
+from six import BytesIO
 import tempfile
 
 from six.moves.urllib.parse import parse_qsl, urlsplit
@@ -52,7 +52,7 @@ class InputFile(object):
         if length > self.max_buffer_size:
             self._buf = tempfile.TemporaryFile(mode="rw+b")
         else:
-            self._buf = StringIO.StringIO()
+            self._buf = BytesIO()
 
     @property
     def _buf_position(self):
@@ -75,7 +75,7 @@ class InputFile(object):
             old_data = self._buf.read(buf_bytes)
             bytes_remaining -= buf_bytes
         else:
-            old_data = ""
+            old_data = b""
 
         assert self._buf_position == self._file_position, (
             "Before reading buffer position (%i) didn't match file position (%i)" %
