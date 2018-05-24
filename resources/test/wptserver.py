@@ -27,20 +27,24 @@ class WPTServer(object):
         logging.info('Executing %s' % ' '.join(wptserve_cmd))
         self.proc = subprocess.Popen(
             wptserve_cmd,
-            stderr=self.devnull,
+            #stderr=self.devnull,
             cwd=self.wpt_root)
 
         for retry in range(5):
             # Exponential backoff.
             time.sleep(2 ** retry)
             exit_code = self.proc.poll()
+            print(exit_code)
             if exit_code != None:
+                print("poll - break")
                 logging.warn('Command "%s" exited with %s', ' '.join(wptserve_cmd), exit_code)
                 break
             try:
                 urllib.request.urlopen(self.base_url, timeout=1)
+                print("success")
                 return
             except urllib.error.URLError:
+                print("URLError")
                 pass
 
         raise Exception('Could not start wptserve on %s' % self.base_url)
