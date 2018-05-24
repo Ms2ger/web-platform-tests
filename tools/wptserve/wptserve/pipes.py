@@ -481,7 +481,7 @@ def template(request, content, escape_type="html"):
                     "unexpected token type %s (token '%r'), expected ident or arguments" % (ttype, field)
                 )
 
-        assert isinstance(value, (int, (binary_type, text_type))), tokens
+        assert isinstance(value, (int, text_type, binary_type)), tokens
 
         if variable is not None:
             variables[variable] = value

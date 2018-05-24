@@ -75,6 +75,11 @@ class RouteCompiler(object):
 def compile_path_match(route_pattern):
     """tokens: / or literal or match or *"""
 
+    if isinstance(route_pattern, binary_type):
+        route_pattern = route_pattern.decode("ascii")
+
+    assert isinstance(route_pattern, text_type)
+
     tokenizer = RouteTokenizer()
     tokens, unmatched = tokenizer.scan(route_pattern)
 
