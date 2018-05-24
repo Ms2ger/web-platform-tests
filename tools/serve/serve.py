@@ -13,13 +13,13 @@ import sys
 import threading
 import time
 import traceback
-import urllib2
 import uuid
 from collections import defaultdict, OrderedDict
 from multiprocessing import Process, Event
 
 from localpaths import repo_root
-from six.moves import reload_module
+from six import iteritems
+from six.moves import reload_module, urllib
 
 from manifest.sourcefile import read_script_metadata, js_meta_re, parse_variants
 from wptserve import server as wptserve, handlers
@@ -28,7 +28,6 @@ from wptserve import config
 from wptserve.logger import set_logger
 from wptserve.handlers import filesystem_path, wrap_pipeline
 from wptserve.utils import get_port, HTTPException
-from mod_pywebsocket import standalone as pywebsocket
 
 
 def replace_end(s, old, new):
@@ -325,7 +324,7 @@ class RoutesBuilder(object):
         for (method, suffix, handler_cls) in routes:
             self.mountpoint_routes[url_base].append(
                 (method,
-                 b"%s%s" % (str(url_base) if url_base != "/" else "", str(suffix)),
+                 "%s%s" % (url_base if url_base != "/" else "", suffix),
                  handler_cls(base_path=path, url_base=url_base)))
 
     def add_file_mount_point(self, file_url, base_path):
@@ -417,10 +416,10 @@ def check_subdomains(config):
     connected = False
     for i in range(10):
         try:
-            urllib2.urlopen("http://%s:%d/" % (host, port))
+            urllib.request.urlopen("http://%s:%d/" % (host, port))
             connected = True
             break
-        except urllib2.URLError:
+        except urllib.error.URLError:
             time.sleep(1)
 
     if not connected:
@@ -433,7 +432,7 @@ def check_subdomains(config):
             continue
 
         try:
-            urllib2.urlopen("http://%s:%d/" % (domain, port))
+            urllib.request.urlopen("http://%s:%d/" % (domain, port))
         except Exception:
             logger.critical("Failed probing domain %s. "
                             "You may need to edit /etc/hosts or similar, see README.md." % domain)
@@ -465,11 +464,13 @@ def make_hosts_file(config, host):
 def start_servers(host, ports, paths, routes, bind_address, config, ssl_config,
                   **kwargs):
     servers = defaultdict(list)
-    for scheme, ports in ports.iteritems():
+    for scheme, ports in iteritems(ports):
         assert len(ports) == {"http":2}.get(scheme, 1)
 
         for port in ports:
             if port is None:
+                continue
+            if scheme.startswith("ws"):
                 continue
             init_func = {"http":start_http_server,
                          "https":start_https_server,
@@ -523,6 +524,8 @@ class WebSocketDaemon(object):
                     "-d", doc_root,
                     "-w", handlers_root,
                     "--log-level", log_level]
+
+        from mod_pywebsocket import standalone as pywebsocket
 
         if ssl_config is not None:
             # This is usually done through pywebsocket.main, however we're
