@@ -8,6 +8,8 @@ import sys
 
 from collections import OrderedDict
 
+from six import iteritems
+
 from ..manifest import manifest, update
 
 here = os.path.dirname(__file__)
@@ -68,7 +70,7 @@ def branch_point():
         branch_point = None
 
         # if there are any commits, take the first parent that is not in commits
-        for commit, parents in commit_parents.iteritems():
+        for commit, parents in iteritems(commit_parents):
             for parent in parents:
                 if parent not in commit_parents:
                     branch_point = parent
