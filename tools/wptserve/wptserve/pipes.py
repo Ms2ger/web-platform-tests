@@ -421,6 +421,7 @@ def template(request, content, escape_type="html"):
         content, = match.groups()
 
         tokens = tokenizer.tokenize(content)
+        print([(ty, type(field)) for (ty, field) in tokens])
         tokens = deque(tokens)
 
         token_type, field = tokens.popleft()
@@ -491,6 +492,9 @@ def template(request, content, escape_type="html"):
         return escape_func(text_type(value)).encode("utf-8")
 
     template_regexp = re.compile(br"{{([^}]*)}}")
+    print(type(template_regexp))
+    print(type(config_replacement))
+    print(type(content))
     new_content = template_regexp.sub(config_replacement, content)
 
     return new_content
