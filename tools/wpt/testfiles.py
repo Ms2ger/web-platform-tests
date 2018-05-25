@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 import argparse
 import itertools
 import logging
@@ -52,17 +54,17 @@ def branch_point():
 
         # parse HEAD into an object ref
         head = git("rev-parse", "HEAD")
-        print("head = %s" % head)
+        print("head = %s" % head, file=sys.stderr)
 
         # get everything in refs/heads and refs/remotes that doesn't include HEAD
         not_heads = [item for item in git("rev-parse", "--not", "--branches", "--remotes").split("\n")
                      if item != "^%s" % head]
 
-        print("not heads = %s" % not_heads)
+        print("not heads = %s" % not_heads, file=sys.stderr)
 
         # get all commits on HEAD but not reachable from anything in not_heads
         commits = git("rev-list", "--topo-order", "--parents", "HEAD", *not_heads)
-        print("commits = %s" % commits)
+        print("commits = %s" % commits, file=sys.stderr)
 
         commit_parents = OrderedDict()
         if commits:
