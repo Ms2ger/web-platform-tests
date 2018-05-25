@@ -9,7 +9,7 @@ import types
 import uuid
 from six.moves import cStringIO as StringIO
 
-from six import text_type
+from six import text_type, binary_type
 
 def resolve_content(response):
     return b"".join(item for item in response.iter_content(read_file=True))
@@ -479,7 +479,7 @@ def template(request, content, escape_type="html"):
                     "unexpected token type %s (token '%r'), expected ident or arguments" % (ttype, field)
                 )
 
-        assert isinstance(value, (int, text_type)), tokens
+        assert isinstance(value, (int, text_type, binary_type)), tokens
 
         if variable is not None:
             variables[variable] = value
