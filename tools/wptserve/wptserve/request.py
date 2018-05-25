@@ -1,6 +1,6 @@
 import base64
 import cgi
-from six.moves import http_cookies as Cookie
+from six.moves import http_cookies
 from six import BytesIO
 import tempfile
 
@@ -315,7 +315,7 @@ class Request(object):
     @property
     def cookies(self):
         if self._cookies is None:
-            parser = Cookie.BaseCookie()
+            parser = http_cookies.BaseCookie()
             cookie_headers = self.headers.get("cookie", "")
             parser.load(cookie_headers)
             cookies = Cookies()
