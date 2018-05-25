@@ -37,6 +37,8 @@ def display_branch_point():
 
 
 def branch_point():
+    return "52c0a06f671760e73dbbb01b6ede1dfd43f786ad"
+
     git = get_git_cmd(wpt_root)
     if (os.environ.get("TRAVIS_PULL_REQUEST", "false") == "false" and
         os.environ.get("TRAVIS_BRANCH") == "master"):
