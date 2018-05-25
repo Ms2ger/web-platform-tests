@@ -52,13 +52,18 @@ def branch_point():
 
         # parse HEAD into an object ref
         head = git("rev-parse", "HEAD")
+        print("head = %s" % head)
 
         # get everything in refs/heads and refs/remotes that doesn't include HEAD
         not_heads = [item for item in git("rev-parse", "--not", "--branches", "--remotes").split("\n")
                      if item != "^%s" % head]
 
+        print("not heads = %s" % not_heads)
+
         # get all commits on HEAD but not reachable from anything in not_heads
         commits = git("rev-list", "--topo-order", "--parents", "HEAD", *not_heads)
+        print("commits = %s" % commits)
+
         commit_parents = OrderedDict()
         if commits:
             for line in commits.split("\n"):
