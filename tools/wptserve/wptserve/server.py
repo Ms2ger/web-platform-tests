@@ -258,7 +258,7 @@ class WebTestRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                     response.set_error(e.code, e.message)
                 except Exception as e:
                     message = getattr(e, "message", None)
-                    if message is not None:
+                    if message:
                         err = [text_type(message)]
                     else:
                         err = []
