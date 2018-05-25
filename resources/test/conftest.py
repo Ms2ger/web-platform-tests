@@ -127,7 +127,7 @@ class HTMLItem(pytest.Item, pytest.Collector):
     @staticmethod
     def _assert_sequence(nums):
         if nums and len(nums) > 0:
-            assert nums == range(1, nums[-1] + 1)
+            assert nums == list(range(1, nums[-1] + 1))
 
     @staticmethod
     def _scrub_stack(test_obj):
