@@ -1,21 +1,18 @@
 import pickle
 import platform
 import os
-import sys
 
 import pytest
 
 import localpaths
-from . import serve
-from .serve import Config
+from .serve import Config, make_hosts_file
 
 
 @pytest.mark.skipif(platform.uname()[0] == "Windows",
                     reason="Expected contents are platform-dependent")
-@pytest.mark.xfail(sys.version_info >= (3,), reason="serve only works on Py2")
 def test_make_hosts_file_nix():
     c = Config(browser_host="foo.bar", alternate_hosts={"alt": "foo2.bar"})
-    hosts = serve.make_hosts_file(c, "192.168.42.42")
+    hosts = make_hosts_file(c, "192.168.42.42")
     lines = hosts.split("\n")
     assert set(lines) == {"",
                           "192.168.42.42\tfoo.bar",
@@ -34,10 +31,9 @@ def test_make_hosts_file_nix():
 
 @pytest.mark.skipif(platform.uname()[0] != "Windows",
                     reason="Expected contents are platform-dependent")
-@pytest.mark.xfail(sys.version_info >= (3,), reason="serve only works on Py2")
 def test_make_hosts_file_windows():
     c = Config(browser_host="foo.bar", alternate_hosts={"alt": "foo2.bar"})
-    hosts = serve.make_hosts_file(c, "192.168.42.42")
+    hosts = make_hosts_file(c, "192.168.42.42")
     lines = hosts.split("\n")
     assert set(lines) == {"",
                           "0.0.0.0\tnonexistent.foo.bar",
