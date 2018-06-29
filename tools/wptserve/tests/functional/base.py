@@ -57,7 +57,7 @@ class TestUsingServer(unittest.TestCase):
         if headers is None:
             headers = {}
 
-        for name, value in headers.iteritems():
+        for name, value in headers.items():
             req.add_header(name, value)
 
         if body is not None:

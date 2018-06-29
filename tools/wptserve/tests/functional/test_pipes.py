@@ -13,7 +13,6 @@ from .base import TestUsingServer, doc_root
 
 
 class TestStatus(TestUsingServer):
-    @pytest.mark.xfail(sys.version_info >= (3,), reason="wptserve only works on Py2")
     def test_status(self):
         resp = self.request("/document.txt", query="pipe=status(202)")
         self.assertEqual(resp.getcode(), 202)

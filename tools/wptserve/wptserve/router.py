@@ -1,6 +1,7 @@
 import itertools
 import re
-import types
+
+from six import binary_type, text_type
 
 from .logger import get_logger
 
@@ -135,9 +136,10 @@ class Router(object):
                         object and the response object.
 
         """
-        if type(methods) in types.StringTypes or methods in (any_method, "*"):
+        if type(methods) in (binary_type, text_type) or methods in (any_method, "*"):
             methods = [methods]
         for method in methods:
+            print(type(path))
             self.routes.append((method, compile_path_match(path), handler))
             self.logger.debug("Route pattern: %s" % self.routes[-1][1].pattern)
 
