@@ -1256,17 +1256,31 @@ IdlInterface.prototype.is_global = function()
     });
 };
 
+IdlInterface.prototype.legacy_namespace = function()
+{
+    var legacyNamespace = this.extAttrs.find(function(attribute) {
+        return attribute.name === "LegacyNamespace";
+    });
+    return legacyNamespace ? legacyNamespace.rhs.value : undefined;
+};
+
+IdlInterface.prototype.namespace_object = function()
+{
+    var legacyNamespace = this.legacy_namespace();
+    return legacyNamespace ? self[legacyNamespace] : self;
+};
+
 IdlInterface.prototype.assert_interface_object_exists = function()
 {
-    assert_own_property(self, this.name,
-                        "self does not have own property " + format_value(this.name));
+    assert_own_property(this.namespace_object(), this.name,
+                        "Namespace object does not have own property " + format_value(this.name));
 };
 
 Object.defineProperty(IdlInterface.prototype, "interface_object", {
     "get": function() {
         assert_false(this.has_extended_attribute("NoInterfaceObject"),
                      "No interface object with NoInterfaceObject");
-        return self[this.name];
+        return this.namespace_object()[this.name];
     },
 });
 
@@ -1451,7 +1465,7 @@ IdlInterface.prototype.test_self = function()
         // TODO: Should we test here that the property is actually writable
         // etc., or trust getOwnPropertyDescriptor?
         this.assert_interface_object_exists();
-        var desc = Object.getOwnPropertyDescriptor(self, this.name);
+        var desc = Object.getOwnPropertyDescriptor(this.namespace_object(), this.name);
         assert_false("get" in desc, "self's property " + format_value(this.name) + " should not have a getter");
         assert_false("set" in desc, "self's property " + format_value(this.name) + " should not have a setter");
         assert_true(desc.writable, "self's property " + format_value(this.name) + " should be writable");
