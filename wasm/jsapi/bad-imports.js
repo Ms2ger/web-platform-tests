@@ -64,10 +64,14 @@ function test_bad_imports(t) {
     [""],
     [Symbol()],
     [{}, "plain object"],
-    [WebAssembly.Global, "WebAssembly.Global"],
-    [WebAssembly.Global.prototype, "WebAssembly.Global.prototype"],
-    [Object.create(WebAssembly.Global.prototype), "Object.create(WebAssembly.Global.prototype)"],
   ];
+  if (WebAssembly.Global) {
+    nonGlobals.push(
+      [WebAssembly.Global, "WebAssembly.Global"],
+      [WebAssembly.Global.prototype, "WebAssembly.Global.prototype"],
+      [Object.create(WebAssembly.Global.prototype), "Object.create(WebAssembly.Global.prototype)"],
+    );
+  }
 
   for (const [value, name = format_value(value)] of nonGlobals) {
     t(`Importing a global with an incorrectly-typed value: ${name}`,
