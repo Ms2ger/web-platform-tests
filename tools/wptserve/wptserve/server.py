@@ -307,7 +307,7 @@ class BaseWebTestRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
         return
 
     def respond_with_error(self, response, e):
-        message = str(e)
+        message = text_type(e)
         if message:
             err = [message]
         else:
