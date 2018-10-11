@@ -1549,12 +1549,13 @@ IdlInterface.prototype.test_self = function()
             //
             // "If I was not declared with a [Constructor] extended attribute,
             // then throw a TypeError."
+            var interface_object = this.get_interface_object();
             assert_throws(new TypeError(), function() {
-                this.get_interface_object()();
-            }.bind(this), "interface object didn't throw TypeError when called as a function");
+                interface_object();
+            }, "interface object didn't throw TypeError when called as a function");
             assert_throws(new TypeError(), function() {
-                new this.get_interface_object()();
-            }.bind(this), "interface object didn't throw TypeError when called as a constructor");
+                new interface_object();
+            }, "interface object didn't throw TypeError when called as a constructor");
         }
     }.bind(this), this.name + " interface: existence and properties of interface object");
 
