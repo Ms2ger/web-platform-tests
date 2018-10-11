@@ -1277,8 +1277,8 @@ IdlInterface.prototype.get_interface_object_owner = function()
 
 IdlInterface.prototype.assert_interface_object_exists = function()
 {
-    assert_own_property(this.get_interface_object_owner(), this.name,
-                        "Namespace object does not have own property " + format_value(this.name));
+    var owner = this.get_legacy_namespace() || "self";
+    assert_own_property(self[owner], this.name, owner + " does not have own property " + format_value(this.name));
 };
 
 IdlInterface.prototype.get_interface_object = function() {
