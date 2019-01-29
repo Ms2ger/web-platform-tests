@@ -1,31 +1,37 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Dataset - Enumeration</title>
-    <script src="/resources/testharness.js"></script>
-    <script src="/resources/testharnessreport.js"></script>
-  </head>
-  <body>
-    <h1>Dataset - Enumeration</h1>
-    <div id="log"></div>
-    <script>
-      function testEnumeration(array)
-      {
-        var d = document.createElement("div");
-        for (var i = 0; i < array.length; ++i)
-          d.setAttribute(array[i], "value");
+<head>
+<title>Dataset - Enumeration</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<h1>Dataset - Enumeration</h1>
+<div id="log"></div>
+<script>
+function enumerate(dataset) {
+  var result = [];
+  for (var item in dataset) {
+    result.push(item);
+  }
+  return result;
+}
 
-        var count = 0;
-        for (var item in d.dataset)
-          count++;
+test(function() {
+  var d = document.createElement("div");
+  d.setAttribute('data-foo', "value");
+  d.setAttribute('data-bar', "value");
+  d.setAttribute('data-baz', "value");
+  assert_array_equals(enumerate(d.dataset), ['foo', 'bar', 'baz']);
+}, "A dataset should be enumeratable.");
 
-        return count;
-      }
-
-      test(function() { assert_equals(testEnumeration(['data-foo', 'data-bar', 'data-baz']), 3); },
-        "A dataset should be enumeratable.");
-      test(function() { assert_equals(testEnumeration(['data-foo', 'data-bar', 'dataFoo']), 2); },
-        "Only attributes who qualify as dataset properties should be enumeratable in the dataset.");
-    </script>
-  </body>
+test(function() {
+  var d = document.createElement("div");
+  d.setAttribute('data-foo', "value");
+  d.setAttribute('data-bar', "value");
+  d.setAttribute('dataFoo', "value");
+  assert_array_equals(enumerate(d.dataset), ['foo', 'bar']);
+}, "Only attributes who qualify as dataset properties should be enumeratable in the dataset.");
+</script>
+</body>
 </html>

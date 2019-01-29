@@ -1,42 +1,54 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Dataset - Set</title>
-    <script src="/resources/testharness.js"></script>
-    <script src="/resources/testharnessreport.js"></script>
-  </head>
-  <body>
-    <h1>Dataset - Set</h1>
-    <div id="log"></div>
-    <script>
-      function testSet(prop, expected)
-      {
-        var d = document.createElement("div");
-        d.dataset[prop] = "value";
-        return d.getAttribute(expected) == "value";
-      }
+<head>
+<title>Dataset - Set</title>
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+</head>
+<body>
+<h1>Dataset - Set</h1>
+<div id="log"></div>
+<script>
+function testSet(prop, expected, name) {
+  test(function() {
+    var d = document.createElement("div");
+    d.dataset[prop] = "value";
+    assert_equals(d.getAttribute(expected), "value");
+  }, name);
+}
 
-      test(function() { assert_true(testSet('foo', 'data-foo')); },
-        "Setting element.dataset['foo'] should also change the value of element.getAttribute('data-foo')'");
-      test(function() { assert_true(testSet('fooBar', 'data-foo-bar')); },
-        "Setting element.dataset['fooBar'] should also change the value of element.getAttribute('data-foo-bar')'");
-      test(function() { assert_true(testSet('-', 'data--')); },
-        "Setting element.dataset['-'] should also change the value of element.getAttribute('data--')'");
-      test(function() { assert_true(testSet('Foo', 'data--foo')); },
-        "Setting element.dataset['Foo'] should also change the value of element.getAttribute('data--foo')'");
-      test(function() { assert_true(testSet('-Foo', 'data---foo')); },
-        "Setting element.dataset['-Foo'] should also change the value of element.getAttribute('data---foo')'");
-      test(function() { assert_true(testSet('', 'data-')); },
-        "Setting element.dataset[''] should also change the value of element.getAttribute('data-')'");
-      test(function() { assert_true(testSet('\xE0', 'data-\xE0')); },
-        "Setting element.dataset['\xE0'] should also change the value of element.getAttribute('data-\xE0')'");
-      test(function() { assert_throws('SYNTAX_ERR', function() { testSet('-foo', 'dummy') }); },
-        "Setting element.dataset['-foo'] should throw a SYNTAX_ERR'");
-      test(function() { assert_throws('INVALID_CHARACTER_ERR', function() { testSet('foo\x20', 'dummy') }); },
-        "Setting element.dataset['foo\x20'] should throw an INVALID_CHARACTER_ERR'");
-      test(function() { assert_throws('INVALID_CHARACTER_ERR', function() { testSet('foo\uF900', 'dummy') }); },
-        "Setting element.dataset['foo\uF900'] should throw an INVALID_CHARACTER_ERR'");
-
-    </script>
-  </body>
+testSet('foo', 'data-foo',
+  "Setting element.dataset['foo'] should also change the value of element.getAttribute('data-foo')'");
+testSet('fooBar', 'data-foo-bar',
+  "Setting element.dataset['fooBar'] should also change the value of element.getAttribute('data-foo-bar')'");
+testSet('-', 'data--',
+  "Setting element.dataset['-'] should also change the value of element.getAttribute('data--')'");
+testSet('Foo', 'data--foo',
+  "Setting element.dataset['Foo'] should also change the value of element.getAttribute('data--foo')'");
+testSet('-Foo', 'data---foo',
+  "Setting element.dataset['-Foo'] should also change the value of element.getAttribute('data---foo')'");
+testSet('', 'data-',
+  "Setting element.dataset[''] should also change the value of element.getAttribute('data-')'");
+testSet('\xE0', 'data-\xE0',
+  "Setting element.dataset['\xE0'] should also change the value of element.getAttribute('data-\xE0')'");
+test(function() {
+  var d = document.createElement("div");
+  assert_throws('SYNTAX_ERR', function() {
+    d.dataset['-foo'] = "value";
+  });
+}, "Setting element.dataset['-foo'] should throw a SYNTAX_ERR'");
+test(function() {
+  var d = document.createElement("div");
+  assert_throws('INVALID_CHARACTER_ERR', function() {
+    d.dataset['foo\x20'] = "value";
+  });
+}, "Setting element.dataset['foo\x20'] should throw an INVALID_CHARACTER_ERR'");
+test(function() {
+  var d = document.createElement("div");
+  assert_throws('INVALID_CHARACTER_ERR', function() {
+    d.dataset['foo\uF900'] = "value";
+  });
+}, "Setting element.dataset['foo\uF900'] should throw an INVALID_CHARACTER_ERR'");
+</script>
+</body>
 </html>
