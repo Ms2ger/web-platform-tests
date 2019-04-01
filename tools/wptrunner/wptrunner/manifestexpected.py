@@ -1,4 +1,5 @@
 import os
+from six import binary_type, text_type
 from six.moves.urllib.parse import urljoin
 from collections import deque
 
@@ -46,7 +47,7 @@ def tags(node):
     """Set of tags that have been applied to the test"""
     try:
         value = node.get("tags")
-        if isinstance(value, (str, unicode)):
+        if isinstance(value, (binary_type, text_type)):
             return {value}
         return set(value)
     except KeyError:
@@ -55,7 +56,7 @@ def tags(node):
 
 def prefs(node):
     def value(ini_value):
-        if isinstance(ini_value, (str, unicode)):
+        if isinstance(ini_value, (binary_type, text_type)):
             return tuple(pref_piece.strip() for pref_piece in ini_value.split(':', 1))
         else:
             # this should be things like @Reset, which are apparently type 'object'
@@ -63,7 +64,7 @@ def prefs(node):
 
     try:
         node_prefs = node.get("prefs")
-        if type(node_prefs) in (str, unicode):
+        if type(node_prefs) in (binary_type, text_type):
             rv = dict(value(node_prefs))
         else:
             rv = dict(value(item) for item in node_prefs)
@@ -75,7 +76,7 @@ def prefs(node):
 def set_prop(name, node):
     try:
         node_items = node.get(name)
-        if isinstance(node_items, (str, unicode)):
+        if isinstance(node_items, (binary_type, text_type)):
             rv = {node_items}
         else:
             rv = set(node_items)
@@ -88,7 +89,7 @@ def leak_threshold(node):
     rv = {}
     try:
         node_items = node.get("leak-threshold")
-        if isinstance(node_items, (str, unicode)):
+        if isinstance(node_items, (binary_type, text_type)):
             node_items = [node_items]
         for item in node_items:
             process, value = item.rsplit(":", 1)
@@ -145,7 +146,7 @@ def fuzzy_prop(node):
     if not isinstance(value, list):
         value = [value]
     for item in value:
-        if not isinstance(item, (str, unicode)):
+        if not isinstance(item, (binary_type, text_type)):
             rv.append(item)
             continue
         parts = item.rsplit(":", 1)
