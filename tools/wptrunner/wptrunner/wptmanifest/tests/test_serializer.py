@@ -20,7 +20,7 @@ class TokenizerTest(unittest.TestCase):
         if expected is None:
             expected = input_str
         expected = expected.encode("utf8")
-        actual = self.serialize(input_str)
+        actual = self.serialize(input_str.encode("utf8"))
         self.assertEquals(actual, expected)
 
     def test_0(self):

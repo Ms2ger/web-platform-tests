@@ -7,12 +7,9 @@ from ..backends import static
 # There aren't many tests here because it turns out to be way more convenient to
 # use test_serializer for the majority of cases
 
-
-@pytest.mark.xfail(sys.version[0] == "3",
-                   reason="wptmanifest.parser doesn't support py3")
 class TestStatic(unittest.TestCase):
     def compile(self, input_text, input_data):
-        return static.compile(input_text, input_data)
+        return static.compile(input_text.encode("utf-8"), input_data)
 
     def test_get_0(self):
         data = """
