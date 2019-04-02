@@ -1,16 +1,16 @@
-from six import binary_type, text_type
+from six import binary_type, iterbytes, text_type
 
 from .node import NodeVisitor, ValueNode, ListNode, BinaryExpressionNode
 from .parser import atoms, precedence
 
 atom_names = {v:b"@%s" % k.encode("utf8") for (k,v) in atoms.items()}
 
-named_escapes = set(["\a", "\b", "\f", "\n", "\r", "\t", "\v"])
+named_escapes = set(s[0] for s in [b"\a", b"\b", b"\f", b"\n", b"\r", b"\t", b"\v"])
 
 def escape(string, extras=b""):
     assert isinstance(string, binary_type), string
     rv = b""
-    for c in string:
+    for c in iterbytes(string):
         if c in named_escapes:
             rv += c.encode("unicode_escape")
         elif c == "\\":
