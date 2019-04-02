@@ -14,7 +14,7 @@
 
 from __future__ import unicode_literals
 
-from six import binary_type, text_type, BytesIO
+from six import binary_type, text_type, unichr, BytesIO
 
 from .node import (AtomNode, BinaryExpressionNode, BinaryOperatorNode,
                    ConditionalNode, DataNode, IndexNode, KeyValueNode, ListNode,

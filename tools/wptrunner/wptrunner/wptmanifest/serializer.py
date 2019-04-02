@@ -1,28 +1,28 @@
+from six import binary_type, text_type
+
 from .node import NodeVisitor, ValueNode, ListNode, BinaryExpressionNode
 from .parser import atoms, precedence
 
-atom_names = {v:"@%s" % k for (k,v) in atoms.items()}
+atom_names = {v:b"@%s" % k.encode("utf8") for (k,v) in atoms.items()}
 
 named_escapes = set(["\a", "\b", "\f", "\n", "\r", "\t", "\v"])
 
-def escape(string, extras=""):
-    # Assumes input bytes are either UTF8 bytes or unicode.
-    rv = ""
+def escape(string, extras=b""):
+    assert isinstance(string, binary_type), string
+    rv = b""
     for c in string:
         if c in named_escapes:
             rv += c.encode("unicode_escape")
         elif c == "\\":
             rv += "\\\\"
-        elif c < '\x20':
+        elif c < 0x20:
             rv += "\\x%02x" % ord(c)
         elif c in extras:
             rv += "\\" + c
         else:
             rv += c
-    if isinstance(rv, unicode):
-        return rv.encode("utf8")
-    else:
-        return rv
+    assert isinstance(rv, binary_type), rv
+    return rv
 
 
 class ManifestSerializer(NodeVisitor):
@@ -31,80 +31,92 @@ class ManifestSerializer(NodeVisitor):
 
     def serialize(self, root):
         self.indent = 2
-        rv = "\n".join(self.visit(root))
+        rv = b"\n".join(self.visit(root))
+        assert isinstance(rv, binary_type)
         if not rv:
             return rv
-        if rv[-1] != "\n":
-            rv = rv + "\n"
+        if rv[-1] != b"\n":
+            rv = rv + b"\n"
         return rv
+
+    @staticmethod
+    def _data(node):
+        if isinstance(node.data, binary_type):
+            return node.data
+
+        if isinstance(node.data, text_type):
+            return node.data.encode("utf8")
+
+        return binary_type(node.data)
 
     def visit_DataNode(self, node):
         rv = []
         if not self.skip_empty_data or node.children:
             if node.data:
-                rv.append("[%s]" % escape(node.data, extras="]"))
-                indent = self.indent * " "
+                rv.append(b"[%s]" % escape(self._data(node), extras="]"))
+                indent = self.indent * b" "
             else:
-                indent = ""
+                indent = b""
 
             for child in node.children:
-                rv.extend("%s%s" % (indent if item else "", item) for item in self.visit(child))
+                rv.extend(b"%s%s" % (indent if item else b"", item) for item in self.visit(child))
 
             if node.parent:
-                rv.append("")
+                rv.append(b"")
 
+        for v in rv:
+            assert isinstance(v, binary_type), v
         return rv
 
     def visit_KeyValueNode(self, node):
-        rv = [escape(node.data, ":") + ":"]
-        indent = " " * self.indent
+        rv = [escape(self._data(node), b":") + b":"]
+        indent = b" " * self.indent
 
         if len(node.children) == 1 and isinstance(node.children[0], (ValueNode, ListNode)):
-            rv[0] += " %s" % self.visit(node.children[0])[0]
+            rv[0] += b" %s" % self.visit(node.children[0])[0]
         else:
             for child in node.children:
                 rv.append(indent + self.visit(child)[0])
 
+        for v in rv:
+            assert isinstance(v, binary_type), v
         return rv
 
     def visit_ListNode(self, node):
-        rv = ["["]
-        rv.extend(", ".join(self.visit(child)[0] for child in node.children))
-        rv.append("]")
-        return ["".join(rv)]
+        rv = [b"["]
+        rv.extend(b", ".join(self.visit(child)[0] for child in node.children))
+        rv.append(b"]")
+        return [b"".join(rv)]
 
     def visit_ValueNode(self, node):
-        if not isinstance(node.data, (str, unicode)):
-            data = unicode(node.data)
-        else:
-            data = node.data
-        if "#" in data or (isinstance(node.parent, ListNode) and
-                           ("," in data or "]" in data)):
-            if "\"" in data:
-                quote = "'"
+        data = self._data(node)
+        if b"#" in data or (isinstance(node.parent, ListNode) and
+                            (b"," in data or b"]" in data)):
+            if b"\"" in data:
+                quote = b"'"
             else:
-                quote = "\""
+                quote = b"\""
         else:
-            quote = ""
+            quote = b""
         return [quote + escape(data, extras=quote) + quote]
 
     def visit_AtomNode(self, node):
-        return [atom_names[node.data]]
+        return [atom_names[self._data(node)]]
 
     def visit_ConditionalNode(self, node):
-        return ["if %s: %s" % tuple(self.visit(item)[0] for item in node.children)]
+        return [b"if %s: %s" % tuple(self.visit(item)[0] for item in node.children)]
 
     def visit_StringNode(self, node):
-        rv = ["\"%s\"" % escape(node.data, extras="\"")]
+        rv = [b"\"%s\"" % escape(self._data(node), extras="\"")]
         for child in node.children:
             rv[0] += self.visit(child)[0]
         return rv
 
     def visit_NumberNode(self, node):
-        return [str(node.data)]
+        return [self._data(node)]
 
     def visit_VariableNode(self, node):
-        rv = escape(node.data)
+        rv = escape(self._data(node))
         for child in node.children:
             rv += self.visit(child)
         return [rv]
@@ -135,10 +147,10 @@ class ManifestSerializer(NodeVisitor):
         return [" ".join(children)]
 
     def visit_UnaryOperatorNode(self, node):
-        return [str(node.data)]
+        return [self._data(node)]
 
     def visit_BinaryOperatorNode(self, node):
-        return [str(node.data)]
+        return [self._data(node)]
 
 
 def serialize(tree, *args, **kwargs):
