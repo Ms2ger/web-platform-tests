@@ -98,5 +98,61 @@
                 assert_equals(storage.getItem(key), "value");
             }
         }, "Setting property for key " + key + " on " + name + " with accessor property on prototype");
+
+        test(function() {
+            var value = "value";
+
+            var storage = window[name];
+            storage.clear();
+
+            var originalPrototype = Object.getPrototypeOf(sessionStorage);
+            var calledSetter = 0;
+            var proxyPrototype = new Proxy(originalPrototype, {
+                set(target, p, v, receiver) {
+                
+                    ++calledSetter;
+                    assert_equals(target, originalPrototype);
+                    assert_equals(p, key);
+                    assert_equals(v, value);
+                    assert_equals(receiver, storage);
+                    return false;
+                },
+            });
+            Object.setPrototypeOf(sessionStorage, proxyPrototype);
+            this.add_cleanup(function() { Object.setPrototypeOf(sessionStorage, originalPrototype); });
+            assert_equals(storage[key] = value, value);
+            assert_equals(storage[key], undefined);
+            assert_equals(storage.getItem(key), null);
+            assert_equals(calledSetter, 1);
+        }, "Setting property for key " + key + " on " + name + " with proxy on prototype");
+
+        test(function() {
+            var value = "value";
+
+            var storage = window[name];
+            storage.clear();
+
+            var originalPrototype = Object.getPrototypeOf(storage);
+            var calledSetter = 0;
+            var proxyPrototype = new Proxy(originalPrototype, {
+                set(target, p, v, receiver) {
+                
+                    ++calledSetter;
+                    assert_equals(target, originalPrototype);
+                    assert_equals(p, key);
+                    assert_equals(v, value);
+                    assert_equals(receiver, storage);
+                    return false;
+                },
+            });
+            Object.setPrototypeOf(storage, proxyPrototype);
+            this.add_cleanup(function() { Object.setPrototypeOf(storage, originalPrototype); });
+
+            var object = Object.create(storage);
+            assert_equals(object[key] = value, value);
+//            assert_equals(storage[key], undefined);
+            assert_equals(storage.getItem(key), null);
+            assert_equals(calledSetter, 1);
+        }, "Setting property for key " + key + " with " + name + " as prototype with proxy on prototype");
     });
 });
