@@ -2,10 +2,12 @@ from __future__ import print_function
 import array
 import os
 import shutil
+import sys
 import tempfile
 import uuid
 from collections import defaultdict, namedtuple
 
+import six
 from mozlog import structuredlog
 
 from . import manifestupdate
@@ -23,6 +25,12 @@ try:
     import ujson as json
 except ImportError:
     import json
+
+
+def intern_string(s):
+    if six.PY3:
+        return sys.intern(s)
+    return intern(s.encode("utf8"))
 
 
 def update_expected(test_paths, serve_root, log_file_names,
@@ -356,7 +364,7 @@ class ExpectedUpdater(object):
         self.run_info = run_info_intern.store(data["run_info"])
 
     def test_start(self, data):
-        test_id = intern(data["test"].encode("utf8"))
+        test_id = intern_string(data["test"])
         try:
             test_data = self.id_test_map[test_id]
         except KeyError:
@@ -369,8 +377,8 @@ class ExpectedUpdater(object):
         self.tests_visited[test_id] = set()
 
     def test_status(self, data):
-        test_id = intern(data["test"].encode("utf8"))
-        subtest = intern(data["subtest"].encode("utf8"))
+        test_id = intern_string(data["test"])
+        subtest = intern_string(data["subtest"])
         test_data = self.id_test_map.get(test_id)
         if test_data is None:
             return
@@ -387,7 +395,7 @@ class ExpectedUpdater(object):
         if data["status"] == "SKIP":
             return
 
-        test_id = intern(data["test"].encode("utf8"))
+        test_id = intern_string(data["test"])
         test_data = self.id_test_map.get(test_id)
         if test_data is None:
             return
@@ -400,7 +408,7 @@ class ExpectedUpdater(object):
         del self.tests_visited[test_id]
 
     def assertion_count(self, data):
-        test_id = intern(data["test"].encode("utf8"))
+        test_id = intern_string(data["test"])
         test_data = self.id_test_map.get(test_id)
         if test_data is None:
             return
@@ -411,7 +419,7 @@ class ExpectedUpdater(object):
 
     def test_for_scope(self, data):
         dir_path = data.get("scope", "/")
-        dir_id = intern(os.path.join(dir_path, "__dir__").replace(os.path.sep, "/").encode("utf8"))
+        dir_id = intern_string(os.path.join(dir_path, "__dir__").replace(os.path.sep, "/"))
         if dir_id.startswith("/"):
             dir_id = dir_id[1:]
         return dir_id, self.id_test_map[dir_id]
@@ -449,13 +457,13 @@ def create_test_tree(metadata_path, test_manifest):
     all_types = manifestitem.item_types.keys()
     include_types = set(all_types) - exclude_types
     for item_type, test_path, tests in test_manifest.itertypes(*include_types):
-        test_file_data = TestFileData(intern(test_manifest.url_base.encode("utf8")),
-                                      intern(item_type.encode("utf8")),
+        test_file_data = TestFileData(intern_string(test_manifest.url_base),
+                                      intern_string(item_type),
                                       metadata_path,
                                       test_path,
                                       tests)
         for test in tests:
-            id_test_map[intern(test.id.encode("utf8"))] = test_file_data
+            id_test_map[intern_string(test.id)] = test_file_data
 
         dir_path = os.path.split(test_path)[0].replace(os.path.sep, "/")
         while True:
@@ -463,9 +471,9 @@ def create_test_tree(metadata_path, test_manifest):
                 dir_id = dir_path + "/__dir__"
             else:
                 dir_id = "__dir__"
-            dir_id = intern((test_manifest.url_base + dir_id).lstrip("/").encode("utf8"))
+            dir_id = intern_string((test_manifest.url_base + dir_id).lstrip("/"))
             if dir_id not in id_test_map:
-                test_file_data = TestFileData(intern(test_manifest.url_base.encode("utf8")),
+                test_file_data = TestFileData(intern_string(test_manifest.url_base),
                                               None,
                                               metadata_path,
                                               dir_id,
@@ -534,7 +542,7 @@ class TestFileData(object):
         self.item_type = item_type
         self.test_path = test_path
         self.metadata_path = metadata_path
-        self.tests = {intern(item.id.encode("utf8")) for item in tests}
+        self.tests = {intern_string(item.id) for item in tests}
         self._requires_update = False
         self.clear = set()
         self.data = defaultdict(lambda: defaultdict(PackedResultList))

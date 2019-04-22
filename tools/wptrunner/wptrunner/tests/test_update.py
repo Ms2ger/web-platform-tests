@@ -98,11 +98,9 @@ def create_test_manifest(tests, url_base="/"):
     return m
 
 
-@pytest.mark.xfail(sys.version[0] == "3",
-                   reason="metadata doesn't support py3")
 def test_update_0():
     tests = [("path/to/test.htm", ["/path/to/test.htm"], "testharness",
-              """[test.htm]
+              b"""[test.htm]
   [test1]
     expected: FAIL""")]
 
