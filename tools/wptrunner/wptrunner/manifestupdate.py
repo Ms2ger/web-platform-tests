@@ -1,6 +1,7 @@
 from __future__ import print_function
 import itertools
 import os
+from six import iteritems, iterkeys, itervalues
 from six.moves.urllib.parse import urljoin
 from collections import namedtuple, defaultdict
 from math import ceil
@@ -145,7 +146,7 @@ class ExpectedManifest(ManifestItem):
         self.update_properties["leak-threshold"].set(run_info, result)
 
     def coalesce_properties(self, stability):
-        for prop_update in self.update_properties.itervalues():
+        for prop_update in itervalues(self.update_properties):
             prop_update.coalesce(stability)
 
 
@@ -241,7 +242,7 @@ class TestNode(ManifestItem):
                     del self._data[key]
                     break
 
-        for subtest in self.subtests.itervalues():
+        for subtest in itervalues(self.subtests):
             subtest.clear(key)
 
     def append(self, node):
@@ -263,7 +264,7 @@ class TestNode(ManifestItem):
             return subtest
 
     def coalesce_properties(self, stability):
-        for prop_update in self.update_properties.itervalues():
+        for prop_update in itervalues(self.update_properties):
             prop_update.coalesce(stability)
 
 
@@ -656,7 +657,7 @@ def group_conditionals(values, property_order=None, boolean_properties=None):
 
     by_property = defaultdict(set)
     for run_info, value in values:
-        for prop_name, prop_value in run_info.iteritems():
+        for prop_name, prop_value in iteritems(run_info):
             by_property[(prop_name, prop_value)].add(value)
 
     if property_order is None:
@@ -670,13 +671,13 @@ def group_conditionals(values, property_order=None, boolean_properties=None):
     # If we have more than one value, remove any properties that are common
     # for all the values
     if len(values) > 1:
-        for key, statuses in by_property.copy().iteritems():
+        for key, statuses in iteritems(by_property.copy()):
             if len(statuses) == len(values):
                 del by_property[key]
         if not by_property:
             raise ConditionError
 
-    properties = {item[0] for item in by_property.iterkeys()}
+    properties = {item[0] for item in iterkeys(by_property)}
     include_props = []
 
     for prop in property_order:

@@ -3,7 +3,7 @@ import mock
 import os
 import pytest
 import sys
-from io import BytesIO
+from io import BytesIO, StringIO
 
 from .. import metadata, manifestupdate
 from ..update import WPTUpdate
@@ -66,7 +66,7 @@ def create_updater(tests, url_base="/", **kwargs):
 
 
 def create_log(entries):
-    data = BytesIO()
+    data = StringIO()
     if isinstance(entries, list):
         logger = structuredlog.StructuredLogger("expected_test")
         handler = handlers.StreamHandler(data, formatters.JSONFormatter())

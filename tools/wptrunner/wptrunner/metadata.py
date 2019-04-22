@@ -8,6 +8,7 @@ import uuid
 from collections import defaultdict, namedtuple
 
 import six
+from six import iteritems, itervalues
 from mozlog import structuredlog
 
 from . import manifestupdate
@@ -101,7 +102,7 @@ def unexpected_changes(manifests, change_data, files_changed):
     files_changed = set(files_changed)
 
     root_manifest = None
-    for manifest, paths in manifests.iteritems():
+    for manifest, paths in iteritems(manifests):
         if paths["url_base"] == "/":
             root_manifest = manifest
             break
@@ -187,7 +188,7 @@ def load_test_data(test_paths):
     manifests = manifest_loader.load()
 
     id_test_map = {}
-    for test_manifest, paths in manifests.iteritems():
+    for test_manifest, paths in iteritems(manifests):
         id_test_map.update(create_test_tree(paths["metadata_path"],
                                             test_manifest))
     return id_test_map
@@ -212,10 +213,10 @@ def update_from_logs(id_test_map, *log_filenames, **kwargs):
 
 
 def update_results(id_test_map, property_order, boolean_properties, stability):
-    test_file_items = set(id_test_map.itervalues())
+    test_file_items = set(itervalues(id_test_map))
 
     default_expected_by_type = {}
-    for test_type, test_cls in wpttest.manifest_test_cls.iteritems():
+    for test_type, test_cls in iteritems(wpttest.manifest_test_cls):
         if test_cls.result_cls:
             default_expected_by_type[(test_type, False)] = test_cls.result_cls.default_expected
         if test_cls.subtest_result_cls:
@@ -352,7 +353,7 @@ class ExpectedUpdater(object):
             action_map["lsan_leak"](item)
 
         mozleak_data = data.get("mozleak", {})
-        for scope, scope_data in mozleak_data.iteritems():
+        for scope, scope_data in iteritems(mozleak_data):
             for key, action in [("objects", "mozleak_object"),
                                 ("total", "mozleak_total")]:
                 for item in scope_data.get(key, []):
@@ -585,8 +586,8 @@ class TestFileData(object):
             for prop in self.clear:
                 test_expected.clear(prop)
 
-        for test_id, test_data in self.data.iteritems():
-            for subtest_id, results_list in test_data.iteritems():
+        for test_id, test_data in iteritems(self.data):
+            for subtest_id, results_list in iteritems(test_data):
                 for prop, run_info, value in results_list:
                     # Special case directory metadata
                     if subtest_id is None and test_id.endswith("__dir__"):
