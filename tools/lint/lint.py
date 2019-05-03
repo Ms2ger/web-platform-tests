@@ -261,7 +261,7 @@ def check_css_globally_unique(repo_root, paths):
         elif source_file.name_is_reference:
             ref_files[source_file.name].add(path)
         else:
-            name = source_file.name.replace(b'-manual', b'')
+            name = source_file.name.replace('-manual', '')
             test_files[name].add(path)
 
     errors = []
@@ -524,16 +524,16 @@ def check_parsed(repo_root, path, f):
             return (script == src or
                 ("/%s" % script in src and src != "/resources/%s" % script))
 
-        if incorrect_path(b"testharness.js", src):
+        if incorrect_path("testharness.js", src):
             errors.append(rules.TestharnessPath.error(path))
 
-        if incorrect_path(b"testharnessreport.js", src):
+        if incorrect_path("testharnessreport.js", src):
             errors.append(rules.TestharnessReportPath.error(path))
 
-        if incorrect_path(b"testdriver.js", src):
+        if incorrect_path("testdriver.js", src):
             errors.append(rules.TestdriverPath.error(path))
 
-        if incorrect_path(b"testdriver-vendor.js", src):
+        if incorrect_path("testdriver-vendor.js", src):
             errors.append(rules.TestdriverVendorPath.error(path))
 
     return errors

@@ -189,7 +189,7 @@ class SourceFile(object):
                          ("css", "common")}  # type: Set[Tuple[bytes, ...]]
 
     def __init__(self, tests_root, rel_path, url_base, hash=None, contents=None):
-        # type: (bytes, bytes, Text, Optional[bytes], Optional[bytes]) -> None
+        # type: (str, str, Text, Optional[bytes], Optional[bytes]) -> None
         """Object representing a file in a source tree.
 
         :param tests_root: Path to the root of the source tree
@@ -216,10 +216,10 @@ class SourceFile(object):
         self.name, self.ext = os.path.splitext(self.filename)
 
         self.type_flag = None
-        if b"-" in self.name:
-            self.type_flag = self.name.rsplit(b"-", 1)[1].split(b".")[0]
+        if "-" in self.name:
+            self.type_flag = self.name.rsplit("-", 1)[1].split(".")[0]
 
-        self.meta_flags = self.name.split(b".")[1:]
+        self.meta_flags = self.name.split(".")[1:]
 
         self.items_cache = None  # type: Optional[Tuple[Text, List[ManifestItem]]]
         self._hash = hash
