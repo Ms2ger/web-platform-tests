@@ -8,6 +8,26 @@ import sys
 from collections import OrderedDict
 from six import iteritems
 
+MYPY = False
+if MYPY:
+    # MYPY is set to True when run under Mypy.
+    from typing import Any
+    from typing import Callable
+    from typing import Dict
+    from typing import Iterable
+    from typing import List
+    from typing import Optional
+    from typing import Pattern
+    from typing import Sequence
+    from typing import Set
+    from typing import Text
+    from typing_extensions import Protocol
+    class VariadicTextToText(Protocol):
+        def __call__(self, cmd, *args):
+            # type: (Text, *Text) -> Text
+            pass
+
+
 here = os.path.dirname(__file__)
 wpt_root = os.path.abspath(os.path.join(here, os.pardir, os.pardir))
 
@@ -15,12 +35,15 @@ logger = logging.getLogger()
 
 
 def get_git_cmd(repo_path):
+    # type: (bytes) -> VariadicTextToText
     """Create a function for invoking git commands as a subprocess."""
     def git(cmd, *args):
-        full_cmd = ["git", cmd] + list(item.decode("utf8") if isinstance(item, bytes) else item for item in args)
+        # type: (Text, *Text) -> Text
+        full_cmd = ["git", cmd] + list(args)
         try:
             logger.debug(" ".join(full_cmd))
-            return subprocess.check_output(full_cmd, cwd=repo_path, stderr=subprocess.STDOUT).decode("utf8").strip()
+            result = subprocess.check_output(full_cmd, cwd=repo_path, stderr=subprocess.STDOUT)  # type: bytes
+            return result.decode("utf8").strip()
         except subprocess.CalledProcessError as e:
             logger.error("Git command exited with status %i" % e.returncode)
             logger.error(e.output)
@@ -33,11 +56,11 @@ def display_branch_point():
 
 
 def branch_point():
-    git = get_git_cmd(wpt_root)
+    git = get_git_cmd(wpt_root)  # type: VariadicTextToText
     if (os.environ.get("GITHUB_PULL_REQUEST", "false") == "false" and
         os.environ.get("GITHUB_BRANCH") == "master"):
         # For builds on the master branch just return the HEAD commit
-        return git("rev-parse", "HEAD")
+        return git(b"rev-parse", 1)
     elif os.environ.get("GITHUB_PULL_REQUEST", "false") != "false":
         # This is a PR, so the base branch is in GITHUB_BRANCH
         base_branch = os.environ.get("GITHUB_BRANCH")
