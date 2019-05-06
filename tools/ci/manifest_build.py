@@ -180,7 +180,7 @@ def main():
     owner, repo = os.environ[repo_key].split("/", 1)
 
     git = get_git_cmd(wpt_root)
-    head_rev = git("rev-parse", "HEAD")
+    head_rev = git(u"rev-parse", u"HEAD")
 
     pr = get_pr(owner, repo, head_rev)
     if pr is None:
@@ -201,8 +201,8 @@ def main():
     if not tagged:
         return Status.FAIL
 
-    summary = git("show", "--no-patch", '--format="%s"', "HEAD")
-    body = git("show", "--no-patch", '--format="%b"', "HEAD")
+    summary = git(u"show", u"--no-patch", u'--format="%s"', u"HEAD")
+    body = git(u"show", u"--no-patch", u'--format="%b"', u"HEAD")
 
     if not create_release(manifest_path, owner, repo, head_rev, tag_name, summary, body):
         return Status.FAIL

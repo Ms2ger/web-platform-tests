@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 from collections import OrderedDict
-from six import iteritems
+from six import iteritems, text_type
 
 here = os.path.dirname(__file__)
 wpt_root = os.path.abspath(os.path.join(here, os.pardir, os.pardir))
@@ -17,7 +17,10 @@ logger = logging.getLogger()
 def get_git_cmd(repo_path):
     """Create a function for invoking git commands as a subprocess."""
     def git(cmd, *args):
-        full_cmd = ["git", cmd] + list(item.decode("utf8") if isinstance(item, bytes) else item for item in args)
+        # type: (Text, *Text) -> Text
+        assert isinstance(cmd, text_type), cmd
+        assert all(isinstance(item, text_type) for item in args), args
+        full_cmd = [u"git", cmd] + args
         try:
             logger.debug(" ".join(full_cmd))
             return subprocess.check_output(full_cmd, cwd=repo_path, stderr=subprocess.STDOUT).decode("utf8").strip()
@@ -37,26 +40,27 @@ def branch_point():
     if (os.environ.get("GITHUB_PULL_REQUEST", "false") == "false" and
         os.environ.get("GITHUB_BRANCH") == "master"):
         # For builds on the master branch just return the HEAD commit
-        return git("rev-parse", "HEAD")
+        return git(u"rev-parse", u"HEAD")
     elif os.environ.get("GITHUB_PULL_REQUEST", "false") != "false":
         # This is a PR, so the base branch is in GITHUB_BRANCH
         base_branch = os.environ.get("GITHUB_BRANCH")
         assert base_branch, "GITHUB_BRANCH environment variable is defined"
-        branch_point = git("merge-base", "HEAD", base_branch)
+        #XXX
+        branch_point = git(u"merge-base", u"HEAD", base_branch)
     else:
         # Otherwise we aren't on a PR, so we try to find commits that are only in the
         # current branch c.f.
         # http://stackoverflow.com/questions/13460152/find-first-ancestor-commit-in-another-branch
 
         # parse HEAD into an object ref
-        head = git("rev-parse", "HEAD")
+        head = git(u"rev-parse", u"HEAD")
 
         # get everything in refs/heads and refs/remotes that doesn't include HEAD
-        not_heads = [item for item in git("rev-parse", "--not", "--branches", "--remotes").split("\n")
-                     if item != "^%s" % head]
+        not_heads = [item for item in git(u"rev-parse", u"--not", u"--branches", u"--remotes").split(u"\n")
+                     if item != u"^%s" % head]
 
         # get all commits on HEAD but not reachable from anything in not_heads
-        commits = git("rev-list", "--topo-order", "--parents", "HEAD", *not_heads)
+        commits = git(u"rev-list", u"--topo-order", u"--parents", u"HEAD", *not_heads)
         commit_parents = OrderedDict()
         if commits:
             for line in commits.split("\n"):
@@ -87,10 +91,10 @@ def branch_point():
         #   branch point and the merge base)
         #
         # In either case, fall back to using the merge base as the branch point.
-        merge_base = git("merge-base", "HEAD", "origin/master")
+        merge_base = git(u"merge-base", u"HEAD", u"origin/master")
         if (branch_point is None or
             (branch_point != merge_base and
-             not git("log", "--oneline", "%s..%s" % (merge_base, branch_point)).strip())):
+             not git(u"log", u"--oneline", u"%s..%s" % (merge_base, branch_point)).strip())):
             logger.debug("Using merge-base as the branch point")
             branch_point = merge_base
         else:
@@ -116,12 +120,12 @@ def compile_ignore_rule(rule):
 
 def repo_files_changed(revish, include_uncommitted=False, include_new=False):
     git = get_git_cmd(wpt_root)
-    files = git("diff", "--name-only", "-z", revish).split("\0")
+    files = git(u"diff", u"--name-only", u"-z", revish).split("\0")
     assert not files[-1]
     files = set(files[:-1])
 
     if include_uncommitted:
-        entries = git("status", "-z").split("\0")
+        entries = git(u"status", u"-z").split("\0")
         assert not entries[-1]
         entries = entries[:-1]
         for item in entries:
@@ -330,8 +334,8 @@ def get_parser_affected():
 
 def get_revish(**kwargs):
     revish = kwargs["revish"]
-    if kwargs["revish"] is None:
-        revish = "%s..HEAD" % branch_point()
+    if revish is None:
+        revish = u"%s..HEAD" % branch_point()
     return revish
 
 
