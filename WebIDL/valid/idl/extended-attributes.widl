@@ -1,0 +1,4 @@
+interface I {
+  void foo([ExtAttr] optional [Clamp] short argname);
+  void bar([ExtAttr, Clamp] short argname);
+};
