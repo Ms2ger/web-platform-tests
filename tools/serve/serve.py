@@ -19,10 +19,10 @@ from collections import defaultdict, OrderedDict
 from itertools import chain, product
 from multiprocessing import Process, Event
 
-from localpaths import repo_root
+from ..localpaths import repo_root
 from six.moves import reload_module
 
-from manifest.sourcefile import read_script_metadata, js_meta_re, parse_variants
+from ..manifest.sourcefile import read_script_metadata, js_meta_re, parse_variants
 from wptserve import server as wptserve, handlers
 from wptserve import stash
 from wptserve import config

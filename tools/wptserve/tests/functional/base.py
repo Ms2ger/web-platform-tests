@@ -13,7 +13,7 @@ from six import binary_type, iteritems, PY3
 
 from hyper import HTTP20Connection, tls
 import ssl
-from localpaths import repo_root
+#from localpaths import repo_root
 
 wptserve = pytest.importorskip("wptserve")
 
@@ -85,6 +85,7 @@ class TestUsingServer(unittest.TestCase):
         else:
             assert resp.info()[name] == ", ".join(values)
 
+@pytest.mark.skip
 @pytest.mark.skipif(not wptserve.utils.http2_compatible(), reason="h2 server only works in python 2.7.15")
 class TestUsingH2Server:
     def setup_method(self, test_method):

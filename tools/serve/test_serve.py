@@ -5,7 +5,7 @@ import platform
 
 import pytest
 
-import localpaths
+from ..localpaths import repo_root
 from . import serve
 from .serve import ConfigBuilder
 
@@ -55,12 +55,12 @@ def test_make_hosts_file_windows():
 
 def test_ws_doc_root_default():
     with ConfigBuilder() as c:
-        assert c.ws_doc_root == os.path.join(localpaths.repo_root, "websockets", "handlers")
+        assert c.ws_doc_root == os.path.join(repo_root, "websockets", "handlers")
 
 
 def test_init_ws_doc_root():
     with ConfigBuilder(ws_doc_root="/") as c:
-        assert c.doc_root == localpaths.repo_root  # check this hasn't changed
+        assert c.doc_root == repo_root  # check this hasn't changed
         assert c.ws_doc_root == "/"
 
 
@@ -68,7 +68,7 @@ def test_set_ws_doc_root():
     cb = ConfigBuilder()
     cb.ws_doc_root = "/"
     with cb as c:
-        assert c.doc_root == localpaths.repo_root  # check this hasn't changed
+        assert c.doc_root == repo_root  # check this hasn't changed
         assert c.ws_doc_root == "/"
 
 
