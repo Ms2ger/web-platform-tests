@@ -85,7 +85,7 @@ promise_test(async () => {
 
   const buffer = builder.toBuffer();
 
-  const error = new Error();
+  const error = 7;
   const fn = () => { throw error };
   const {instance} = await WebAssembly.instantiate(buffer, {
     module: { fn }
@@ -118,8 +118,26 @@ promise_test(async () => {
   class MyError extends Error {};
   const error = new MyError();
   const fn = () => { throw error };
-  const {instance} = await WebAssembly.instantiate(buffer, {
+  const {instance} = await WebAssembly.instantiate(buffer, { 
     module: { fn }
   });
   assert_throws(new MyError(), () => instance.exports.catch_and_rethrow());
 }, "Imported JS function throws, Wasm catches and rethrows");
+
+
+promise_test(async () => {
+  const kWasmAnyRef = 0x6f;
+  const kSig_r_v = makeSig([], [kWasmAnyRef]);
+  const builder = new WasmModuleBuilder();
+  builder.addFunction("return_null", kSig_r_v)
+    .addBody([
+      kExprRefNull,
+      kExprReturn,
+    ])
+    .exportFunc();
+  const buffer = builder.toBuffer();
+  const {instance} = await WebAssembly.instantiate(buffer, {});
+  assert_equals(instance.exports.return_null(), null);
+}, "Wasm function returns null");
+
+
