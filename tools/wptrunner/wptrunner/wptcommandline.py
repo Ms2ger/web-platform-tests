@@ -1,6 +1,7 @@
 from __future__ import print_function
 import argparse
 import os
+import six
 import sys
 from collections import OrderedDict
 from distutils.spawn import find_executable
@@ -535,7 +536,7 @@ def check_args(kwargs):
 
     if kwargs['extra_prefs']:
         # If a single pref is passed in as a string, make it a list
-        if type(kwargs['extra_prefs']) in (str, unicode):
+        if type(kwargs['extra_prefs']) in (six.text_type, six.binary_type):
             kwargs['extra_prefs'] = [kwargs['extra_prefs']]
         missing = any('=' not in prefarg for prefarg in kwargs['extra_prefs'])
         if missing:

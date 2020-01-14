@@ -273,7 +273,7 @@ class Firefox(Browser):
         return find_executable("geckodriver")
 
     def get_version_and_channel(self, binary):
-        version_string = call(binary, "--version").strip()
+        version_string = call(binary, "--version").decode("utf-8").strip()
         m = re.match(r"Mozilla Firefox (\d+\.\d+(?:\.\d+)?)(a|b)?", version_string)
         if not m:
             return None, "nightly"
@@ -361,13 +361,14 @@ class Firefox(Browser):
         """Get and return latest version number for geckodriver."""
         # This is used rather than an API call to avoid rate limits
         tags = call("git", "ls-remote", "--tags", "--refs",
-                    "https://github.com/mozilla/geckodriver.git")
+                    "https://github.com/mozilla/geckodriver.git").decode("utf-8")
         release_re = re.compile(r".*refs/tags/v(\d+)\.(\d+)\.(\d+)")
-        latest_release = 0
+        latest_release = [0, 0, ]
         for item in tags.split("\n"):
             m = release_re.match(item)
             if m:
                 version = [int(item) for item in m.groups()]
+                print(version)
                 if version > latest_release:
                     latest_release = version
         assert latest_release != 0
@@ -428,7 +429,7 @@ class Firefox(Browser):
 
     def version(self, binary=None, webdriver_binary=None):
         """Retrieve the release version of the installed browser."""
-        version_string = call(binary, "--version").strip()
+        version_string = call(binary, "--version").decode("utf-8").strip()
         m = re.match(r"Mozilla Firefox (.*)", version_string)
         if not m:
             return None

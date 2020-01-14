@@ -4,7 +4,7 @@ import os
 import stat
 from collections import deque
 from collections import MutableMapping
-
+import six
 from six import with_metaclass, PY2
 
 from .sourcefile import SourceFile
@@ -115,7 +115,7 @@ class FileSystem(object):
         mtime_cache = self.mtime_cache
         for dirpath, dirnames, filenames in self.path_filter(walk(self.root)):
             for filename, path_stat in filenames:
-                path = os.path.join(dirpath, filename)
+                path = os.path.join(six.ensure_binary(dirpath), six.ensure_binary(filename))
                 if mtime_cache is None or mtime_cache.updated(path, path_stat):
                     hash = self.hash_cache.get(path, None)
                     yield SourceFile(self.root, path, self.url_base, hash), True
@@ -135,7 +135,7 @@ class CacheFile(with_metaclass(abc.ABCMeta)):
         self.tests_root = tests_root
         if not os.path.exists(cache_root):
             os.makedirs(cache_root)
-        self.path = os.path.join(cache_root, self.file_name)
+        self.path = os.path.join(six.ensure_binary(cache_root), self.file_name)
         self.modified = False
         self.data = self.load(rebuild)
 
@@ -226,7 +226,7 @@ class GitIgnoreCache(CacheFile, MutableMapping):  # type: ignore
 
     def check_valid(self, data):
         # type: (Dict[Any, Any]) -> Dict[Any, Any]
-        ignore_path = os.path.join(self.tests_root, b".gitignore")
+        ignore_path = os.path.join(six.ensure_binary(self.tests_root), b".gitignore")
         mtime = os.path.getmtime(ignore_path)
         if data.get(b"/gitignore_file") != [ignore_path, mtime]:
             self.modified = True
