@@ -35,6 +35,76 @@ test(() => {
   ]);
 }, "Order of evaluation for descriptor");
 
+test(() => {
+  const order = [];
+
+  assert_throws_js(RangeError, () => {
+    new WebAssembly.Memory({
+      get maximum() {
+        order.push("maximum");
+        return {
+          valueOf() {
+            order.push("maximum valueOf");
+            return 0x10001;
+          },
+        };
+      },
+
+      get initial() {
+        order.push("initial");
+        return {
+          valueOf() {
+            order.push("initial valueOf");
+            return 1;
+          },
+        };
+      },
+    });
+  });
+
+  assert_array_equals(order, [
+    "initial",
+    "initial valueOf",
+    "maximum",
+    "maximum valueOf",
+  ]);
+}, "Order of evaluation for descriptor (maximum too large)");
+
+test(() => {
+  const order = [];
+
+  assert_throws_js(RangeError, () => {
+    new WebAssembly.Memory({
+      get maximum() {
+        order.push("maximum");
+        return {
+          valueOf() {
+            order.push("maximum valueOf");
+            return 1;
+          },
+        };
+      },
+
+      get initial() {
+        order.push("initial");
+        return {
+          valueOf() {
+            order.push("initial valueOf");
+            return 0x10001;
+          },
+        };
+      },
+    });
+  });
+
+  assert_array_equals(order, [
+    "initial",
+    "initial valueOf",
+    "maximum",
+    "maximum valueOf",
+  ]);
+}, "Order of evaluation for descriptor (initial too large)");
+
 test(t => {
   const order = [];
 
