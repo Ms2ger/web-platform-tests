@@ -6,7 +6,7 @@
 <script src="/wasm/jsapi/wasm-module-builder.js"></script>
 <!-- This is the entry page, so window.open() should resolve relative to it, even inside host functions. -->
 
-<iframe src="resources/promise-job-entry-incumbent.html"></iframe>
+<iframe src="resources/entry-incumbent.html"></iframe>
 
 <script>
 function host_function(f) {
@@ -52,7 +52,7 @@ window.onload = () => {
       t.add_cleanup(() => w.close());
       assert_equals(w.location.href, expectedURL);
     });
-  }, "Sanity check: this all works as expected with no promises involved");
+  }, "Sanity check: this all works as expected synchronously");
 
   async_test(t => {
     // No t.step_func because that could change the realms
