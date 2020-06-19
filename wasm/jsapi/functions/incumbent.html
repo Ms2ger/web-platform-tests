@@ -13,7 +13,7 @@
 setup({ explicit_done: true });
 
 // postMessage should pick the incumbent page as its .source value to set on the MessageEvent, even
-// inside promise jobs.
+// inside host functions.
 const expectedURL = (new URL("resources/incumbent-incumbent.html", location.href)).href;
 
 let testId = 0;
