@@ -1,3 +1,0 @@
-features:
-  - name: wasm-bulk-memory
-    files: "**"
