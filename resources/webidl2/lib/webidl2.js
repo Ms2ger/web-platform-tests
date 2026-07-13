@@ -1,14 +1,4 @@
-(function webpackUniversalModuleDefinition(root, factory) {
-	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory();
-	else if(typeof define === 'function' && define.amd)
-		define([], factory);
-	else if(typeof exports === 'object')
-		exports["WebIDL2"] = factory();
-	else
-		root["WebIDL2"] = factory();
-})(globalThis, () => {
-return /******/ (() => { // webpackBootstrap
+/******/ (() => { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
 /* 0 */,
@@ -3995,8 +3985,7 @@ __webpack_require__.r(__webpack_exports__);
 
 })();
 
-/******/ 	return __webpack_exports__;
+globalThis.WebIDL2 = __webpack_exports__;
 /******/ })()
 ;
-});
 //# sourceMappingURL=webidl2.js.map

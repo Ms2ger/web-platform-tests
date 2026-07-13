@@ -5,7 +5,7 @@ if [ ! -d "webidl2.js" ]; then
 fi
 cd webidl2.js
 npm install
-npm run build-debug
+npm run build-debug -- -c ../config.json
 HASH=$(git rev-parse HEAD)
 cd ..
 cp webidl2.js/dist/webidl2.js lib/

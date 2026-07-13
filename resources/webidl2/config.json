@@ -1,0 +1,10 @@
+{
+  "entry": "./index.js",
+  "output": {
+    "filename": "webidl2.js",
+    "library": "WebIDL2",
+    "libraryTarget": "global",
+    "globalObject": "globalThis"
+  },
+  "devtool": "source-map"
+}
