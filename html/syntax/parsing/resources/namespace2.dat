@@ -1,0 +1,57 @@
+#data
+<div xmlns:xml="http://www.w3.org/XML/1998/namespace"></div>
+#document
+| <div>
+|   {http://www.w3.org/2000/xmlns/}xmlns:xml="http://www.w3.org/XML/1998/namespace"
+
+#data
+<foo:div xmlns:foo="urn:foo">x</foo:div>
+#document
+| <{urn:foo}foo:div>
+|   {http://www.w3.org/2000/xmlns/}xmlns:foo="urn:foo"
+|   "x"
+
+#data
+<div foo:attr="value" xmlns:foo="urn:foo">x</div>
+#document
+| <div>
+|   {urn:foo}foo:attr="value"
+|   {http://www.w3.org/2000/xmlns/}xmlns:foo="urn:foo"
+|   "x"
+
+#data
+<div xmlns:foo="urn:foo" foo:attr="value">x</div>
+#document
+| <div>
+|   {http://www.w3.org/2000/xmlns/}xmlns:foo="urn:foo"
+|   {urn:foo}foo:attr="value"
+|   "x"
+
+#data
+<div xmlns:foo="urn:foo"><div xmlns:foo="urn:bar" foo:attr="value">x</div></div>
+#document
+| <div>
+|   {http://www.w3.org/2000/xmlns/}xmlns:foo="urn:foo"
+|   <div>
+|     {http://www.w3.org/2000/xmlns/}xmlns:foo="urn:bar"
+|     {urn:bar}foo:attr="value"
+|     "x"
+
+#data
+<div xmlns:foo="urn:foo"><div foo:attr="value" xmlns:foo="urn:bar">x</div></div>
+#document
+| <div>
+|   {http://www.w3.org/2000/xmlns/}xmlns:foo="urn:foo"
+|   <div>
+|     {urn:bar}foo:attr="value"
+|     {http://www.w3.org/2000/xmlns/}xmlns:foo="urn:bar"
+|     "x"
+
+#data
+<div xmlns:foo="urn:foo"><foo:div xmlns:foo="urn:bar">x</foo:div></div>
+#document
+| <div>
+|   {http://www.w3.org/2000/xmlns/}xmlns:foo="urn:foo"
+|   <{urn:bar}foo:div>
+|     {http://www.w3.org/2000/xmlns/}xmlns:foo="urn:bar"
+|     "x"
